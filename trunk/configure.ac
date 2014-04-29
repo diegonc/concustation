@@ -33,6 +33,9 @@ AC_TYPE_SSIZE_T
 AC_FUNC_FORK
 AC_CHECK_FUNCS([mkfifo strerror])
 
+AC_CHECK_FUNC([argp_parse], ,
+	AC_MSG_ERROR([argp library not found.]))
+
 AC_CONFIG_FILES([Makefile
 		 src/Makefile])
 
