@@ -9,11 +9,11 @@ libSources = \
 	lib/utils/NonCopyable.h
 
 productorAutosSources = \
-	productorAutos/main.cc
+	productor-autos/main.cc
 
 bin_PROGRAMS = \
-	productorAutos/productorAutos
+	productor-autos/productor-autos
 
-productorAutos_productorAutos_SOURCES = $(productorAutosSources) $(libSources)
-productorAutos_produtorAutos_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/productorAutos
-#produtorAutos_produtorAutos_LDADD = 
+productor_autos_productor_autos_SOURCES = $(productorAutosSources) $(libSources)
+productor_autos_produtor_autos_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/productor-autos
+#produtor_autos_produtor_autos_LDADD = 
