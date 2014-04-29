@@ -6,8 +6,9 @@
 #include <sys/sem.h>
 
 #include <system/IPCName.h>
+#include <utils/NonCopyable.h>
 
-class Semaphore
+class Semaphore : private NonCopyable
 {
 	private:
 		bool persistent;
@@ -17,7 +18,7 @@ class Semaphore
 	public:
 		Semaphore (key_t key, int nsems, int flags);
 		Semaphore (IPCName name, int nsems, int flags);
-		virtual ~Semaphore ();
+		~Semaphore ();
 
 		void persist ();
 		void initialize ();
