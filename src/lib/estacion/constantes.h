@@ -48,6 +48,12 @@ namespace estacion {
 
 	/*
 	 * proj_id pasado a ftok para generar la key correspondiente al
+	 * semaforo general que indica cuantos surtidores estan libres.
+	 */
+	const char SEM_SURTIDORES_LIBRES = 't';
+
+	/*
+	 * proj_id pasado a ftok para generar la key correspondiente al
 	 * semaforo que protege la caja.
 	 */
 	const char SEM_CAJA = 'c';
