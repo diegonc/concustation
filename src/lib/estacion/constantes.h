@@ -3,6 +3,12 @@
 
 namespace estacion {
 	/*
+	 * pathname pasado a ftok para genera la key que se utiliza al
+	 * adquirir recursos de IPC.
+	 */
+	const char * const PATH_NAME = "./simulacion";
+
+	/*
 	 * proj_id pasado a ftok para generar la key correspondiente a la
 	 * memoria compartida utilizada para almacenar la asignacion de tareas.
 	 */
