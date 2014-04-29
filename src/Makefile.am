@@ -15,9 +15,18 @@ libSources = \
 productorAutosSources = \
 	productor-autos/main.cc
 
+simulacionSources = \
+	simulacion/main.cc
+
 bin_PROGRAMS = \
-	productor-autos/productor-autos
+	productor-autos/productor-autos \
+	simulacion/simulacion
 
 productor_autos_productor_autos_SOURCES = $(productorAutosSources) $(libSources)
 productor_autos_produtor_autos_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/productor-autos
 #produtor_autos_produtor_autos_LDADD = 
+
+simulacion_simulacion_SOURCES = $(simulacionSources) $(libSources)
+simulacion_simulacion_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/simulacion
+#simulacion_simulacion_LDADD = 
+
