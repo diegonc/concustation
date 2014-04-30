@@ -4,10 +4,12 @@
 #include <estacion/constantes.h>
 #include <system/Semaphore.h>
 
+#include <ArgParser.h>
+
 int main(int argc, char** argv)
 {
-	(void) argc;
-	(void) argv;
+	ArgParser& args = ArgParser::getInstance();
+	args.parse(argc, argv);
 
 	Semaphore semCaja(
 		IPCName(estacion::PATH_NAME, estacion::SEM_CAJA)

@@ -16,6 +16,8 @@ productorAutosSources = \
 	productor-autos/main.cc
 
 simulacionSources = \
+	simulacion/ArgParser.cc \
+	simulacion/ArgParser.h \
 	simulacion/main.cc
 
 bin_PROGRAMS = \
