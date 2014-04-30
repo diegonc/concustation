@@ -11,6 +11,10 @@ int main(int argc, char** argv)
 	ArgParser& args = ArgParser::getInstance();
 	args.parse(argc, argv);
 
+	std::cout << "Debug: " << args.debug() << std::endl;
+	std::cout << "Empleados: " << args.empleados () << std::endl;
+	std::cout << "Surtidores: " << args.surtidores () << std::endl;
+
 	Semaphore semCaja(
 		IPCName(estacion::PATH_NAME, estacion::SEM_CAJA)
 		, 1, 0666 | IPC_CREAT | IPC_EXCL);
@@ -31,7 +35,7 @@ int main(int argc, char** argv)
 	// TODO: obtener por parametro el numero de surtidores.
 	semSurtidoresLibres.set(0, 1);
 
-	std::cout << "Ingrese un texto y presione ENTER para continuar.\n";
+	std::cout << "Ingrese un texto y presione ENTER para continuar." << std::endl;
 	
 	std::string tmp;
 	std::cin >> tmp;
