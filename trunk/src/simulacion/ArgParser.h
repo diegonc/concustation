@@ -13,6 +13,8 @@ class ArgParser : private NonCopyable
 		ArgParser();
 		~ArgParser();
 
+		friend int parserFunc (int key, char *arg, struct argp_state *state);
+
 	public:
 		static ArgParser& getInstance();
 
