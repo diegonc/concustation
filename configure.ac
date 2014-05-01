@@ -36,6 +36,9 @@ AC_CHECK_FUNCS([mkfifo strerror])
 AC_CHECK_FUNC([argp_parse], ,
 	AC_MSG_ERROR([argp library not found.]))
 
+AC_CHECK_FUNC([sigsuspend], ,
+	AC_MSG_ERROR([sigsuspend is required]))
+
 AC_CONFIG_FILES([Makefile
 		 src/Makefile])
 
