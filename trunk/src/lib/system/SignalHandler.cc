@@ -50,4 +50,11 @@ sigset_t SignalHandler::getProcMask ()
 	return mask;
 }
 
+sigset_t SignalHandler::setProcMask (const sigset_t& mask)
+{
+	sigset_t old;
+	sigprocmask (SIG_SETMASK, &mask, &old);
+	return old;
+}
+
 EventHandler *SignalHandler::signal_handlers[NSIG] = { NULL };

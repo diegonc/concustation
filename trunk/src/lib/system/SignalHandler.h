@@ -21,6 +21,7 @@ class SignalHandler
 		int removerHandler (int signum);
 
 		static sigset_t getProcMask ();
+		static sigset_t setProcMask (const sigset_t& mask);
 };
 
 #endif /* SIGNALHANDLER_H */

@@ -23,9 +23,19 @@ simulacionSources = \
 	simulacion/ArgParser.h \
 	simulacion/main.cc
 
+empleadoSources = \
+	empleado/Empleado.cc \
+	empleado/Empleado.h \
+	empleado/main.cc
+
 bin_PROGRAMS = \
+	empleado/empleado \
 	productor-autos/productor-autos \
 	simulacion/simulacion
+
+empleado_empleado_SOURCES = $(empleadoSources) $(libSources)
+empleado_empleado_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/empleado
+#empleado_empleado_LDADD =
 
 productor_autos_productor_autos_SOURCES = $(productorAutosSources) $(libSources)
 productor_autos_produtor_autos_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/productor-autos
@@ -34,4 +44,3 @@ productor_autos_produtor_autos_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/productor-a
 simulacion_simulacion_SOURCES = $(simulacionSources) $(libSources)
 simulacion_simulacion_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/simulacion
 #simulacion_simulacion_LDADD = 
-
