@@ -5,9 +5,12 @@ AM_CPPFLAGS = -I$(srcdir)/lib
 
 libSources = \
 	lib/estacion/constantes.h \
+	lib/system/EventHandler.h \
 	lib/system/IPCName.h \
 	lib/system/Semaphore.cc \
 	lib/system/Semaphore.h \
+	lib/system/SignalHandler.cc \
+	lib/system/SignalHandler.h \
 	lib/system/System.cc \
 	lib/system/System.h \
 	lib/utils/NonCopyable.h
