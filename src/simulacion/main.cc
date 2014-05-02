@@ -2,18 +2,22 @@
 #include <string>
 
 #include <estacion/constantes.h>
+#include <logging/Logger.h>
 #include <system/Semaphore.h>
 
 #include <ArgParser.h>
 
 int main(int argc, char** argv)
 {
+	Logger logger (estacion::LOG_FILE, "simulacion");
+
 	ArgParser& args = ArgParser::getInstance();
 	args.parse(argc, argv);
 
-	std::cout << "Debug: " << args.debug() << std::endl;
-	std::cout << "Empleados: " << args.empleados () << std::endl;
-	std::cout << "Surtidores: " << args.surtidores () << std::endl;
+	logger << "Se procesaron los argumentos del programa:" << Logger::endl;
+	logger << "Debug: " << args.debug () << Logger::endl;
+	logger << "Empleados: " << args.empleados () << Logger::endl;
+	logger << "Surtidores: " << args.surtidores () << Logger::endl;
 
 	Semaphore semCaja(
 		IPCName(estacion::PATH_NAME, estacion::SEM_CAJA)

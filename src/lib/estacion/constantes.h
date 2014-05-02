@@ -3,6 +3,12 @@
 
 namespace estacion {
 	/*
+	 * nombre del archivo de log donde se guardan los mensajes
+	 * informativos generados por el programa.
+	 */
+	const char* const LOG_FILE = "simulacion.log";
+
+	/*
 	 * pathname pasado a ftok para genera la key que se utiliza al
 	 * adquirir recursos de IPC.
 	 */
