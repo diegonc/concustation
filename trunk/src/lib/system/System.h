@@ -29,9 +29,10 @@ class System
 	public:
 		static pid_t spawn (const char *file, char *const argv[]);
 
-		static void check (int err)
+		template <typename T>
+		static void check (T err)
 		{
-			if (err == -1) throw SystemErrorException ();
+			if (err == (T)-1) throw SystemErrorException ();
 		}
 };
 
