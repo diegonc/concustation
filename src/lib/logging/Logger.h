@@ -8,7 +8,10 @@
 class Logger : private NonCopyable
 {
 	int fd;
+	std::string filename;
 	std::string module;
+	// indica si se debe generar mensajes de log
+	bool _quiet;
 
 	// buffer donde se recolectan los resultados intermedios del
 	// operador << hasta que recibe el manipulador endl y se escribe
@@ -16,6 +19,9 @@ class Logger : private NonCopyable
 	std::ostringstream buffer;
 	// indica si se grabó el nombre del módulo en el buffer.
 	bool printedModule;
+
+	// abre el archivo de log
+	void open ();
 
 	// bloquea el archivo de log para escribir en el en forma
 	// atómica
@@ -30,7 +36,11 @@ class Logger : private NonCopyable
 
 	public:
 		Logger (const std::string& filename, const std::string& module);
+		Logger (const std::string& filename, const std::string& module, bool quiet);
 		~Logger ();
+
+		bool quiet () const { return _quiet; }
+		void quiet (bool quiet) { _quiet = quiet; }
 
 		// operador << para poder escribir en el log
 		template<typename T>
@@ -47,6 +57,10 @@ class Logger : private NonCopyable
 template<typename T>
 Logger& operator<< (Logger& logger, const T& o)
 {
+	if (logger.quiet ()) {
+		return logger;
+	}
+
 	if (!logger.printedModule) {
 		logger.buffer << "[" << logger.module << "] ";
 		logger.printedModule = true;
