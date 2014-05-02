@@ -9,10 +9,11 @@
 
 int main(int argc, char** argv)
 {
-	Logger logger (estacion::LOG_FILE, "simulacion");
 
 	ArgParser& args = ArgParser::getInstance();
 	args.parse(argc, argv);
+	
+	Logger logger (estacion::LOG_FILE, "simulacion", !args.debug ());
 
 	logger << "Se procesaron los argumentos del programa:" << Logger::endl;
 	logger << "Debug: " << args.debug () << Logger::endl;

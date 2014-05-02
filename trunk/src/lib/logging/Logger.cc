@@ -21,18 +21,39 @@ class Locker
 };
 
 Logger::Logger (const std::string& filename, const std::string& module)
-	: module (module)
+	: fd (-1)
+	, filename (filename)
+	, module (module)
+	, _quiet (true)
 	, printedModule(false)
 {
-	fd = open (filename.c_str ()
-		, O_CREAT | O_CLOEXEC | O_WRONLY | O_APPEND
-		, S_IRUSR | S_IWUSR);
-	System::check (fd);
+}
+
+Logger::Logger (const std::string& filename, const std::string& module, bool quiet)
+	: fd (-1)
+	, filename (filename)
+	, module (module)
+	, _quiet (quiet)
+	, printedModule(false)
+{
+	if (!_quiet) {
+		open ();
+	}
 }
 
 Logger::~Logger ()
 {
-	close (fd);
+	if (fd != -1) {
+		close (fd);
+	}
+}
+
+void Logger::open ()
+{
+	fd = ::open (filename.c_str ()
+		, O_CREAT | O_CLOEXEC | O_WRONLY | O_APPEND
+		, S_IRUSR | S_IWUSR);
+	System::check (fd);
 }
 
 void Logger::lock () const
@@ -54,6 +75,10 @@ Logger& Logger::endl (Logger& logger)
 	size_t remaining = line.size ();
 	ssize_t written;
 
+	if (logger.fd == -1) {
+		logger.open ();
+	}
+
 	Locker grabLock (logger);
 	do {
 		written = write (logger.fd, data, remaining);
@@ -68,5 +93,9 @@ Logger& Logger::endl (Logger& logger)
 
 Logger& operator<< (Logger& logger, Logger& (*pf)(Logger&))
 {
+	if (logger.quiet ()) {
+		return logger;
+	}
+
 	return pf (logger);
 }
