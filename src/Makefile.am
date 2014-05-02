@@ -4,7 +4,9 @@ AM_CXXFLAGS = -O0 -g -Wall -Wextra -Wconversion
 AM_CPPFLAGS = -I$(srcdir)/lib
 
 libSources = \
+	lib/estacion/Auto.h \
 	lib/estacion/constantes.h \
+	lib/estacion/Tarea.h \
 	lib/system/EventHandler.h \
 	lib/system/IPCName.h \
 	lib/system/Semaphore.cc \
