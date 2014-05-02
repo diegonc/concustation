@@ -19,11 +19,11 @@ int parserFunc (int key, char *arg, struct argp_state *state)
 					argParser->_empleados = static_cast<unsigned> (emps);
 				}
 			} else if (state->arg_num == 1) {
-				unsigned long surtidores = strtoul(arg, NULL, 10);
+				long surtidores = strtol(arg, NULL, 10);
 				if (surtidores == 0) {
 					argp_failure (state, 1, 0, "the SURTIDORES argument must be a number greater than 0");
 				} else {
-					argParser->_surtidores = static_cast<unsigned> (surtidores);
+					argParser->_surtidores = static_cast<short> (surtidores);
 				}
 			}
 			break;

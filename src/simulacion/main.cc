@@ -36,9 +36,7 @@ int main(int argc, char** argv)
 	semCaja.set(0, 1);
 	semListaSurtidores.set(0, 1);
 	semListaEmpleados.set(0, 1);
-
-	// TODO: obtener por parametro el numero de surtidores.
-	semSurtidoresLibres.set(0, 1);
+	semSurtidoresLibres.set(0, args.surtidores ());
 
 	std::cout << "Ingrese un texto y presione ENTER para continuar." << std::endl;
 	
