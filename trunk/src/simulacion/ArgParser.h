@@ -8,7 +8,7 @@ class ArgParser : private NonCopyable
 	private:
 		bool _debug;
 		unsigned _empleados;
-		unsigned _surtidores;
+		short _surtidores;
 
 		ArgParser();
 		~ArgParser();
@@ -22,7 +22,7 @@ class ArgParser : private NonCopyable
 
 		bool debug () const { return _debug; }
 		unsigned empleados () const { return _empleados; }
-		unsigned surtidores () const { return _surtidores; }
+		short surtidores () const { return _surtidores; }
 };
 
 #endif
