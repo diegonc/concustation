@@ -11,6 +11,12 @@ Empleado::Empleado(int id)
 	, semListaSurtidores (
 		  IPCName (estacion::PATH_NAME, estacion::SEM_SURTIDORES)
 		, 1, 0666)
+	, semListaEmpleados (
+		  IPCName (estacion::PATH_NAME, estacion::SEM_EMPLEADOS)
+		, 1, 0666)
+	, semCaja (
+		  IPCName (estacion::PATH_NAME, estacion::SEM_CAJA)
+		, 1, 0666)
 	, interrumpido (0)
 	, tareaAsignada (0)
 {

@@ -14,6 +14,8 @@ class Empleado : public EventHandler
 	int id;
 	Semaphore semSurtidoresLibres;
 	Semaphore semListaSurtidores;
+	Semaphore semListaEmpleados;
+	Semaphore semCaja;
 	volatile sig_atomic_t interrumpido;
 	volatile sig_atomic_t tareaAsignada;
 	// Señales que se desbloquean durante la suspensión
