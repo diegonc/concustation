@@ -2,6 +2,7 @@
 #include <string>
 
 #include <estacion/constantes.h>
+#include <estacion/ListaEntero.h>
 #include <estacion/Tarea.h>
 #include <logging/Logger.h>
 #include <logging/LoggerRegistry.h>
@@ -43,11 +44,16 @@ int main(int argc, char** argv)
 		, 1, 0666 | IPC_CREAT | IPC_EXCL);
 
 	SharedArray<Tarea> areaTareas (
-		IPCName (estacion::PATH_NAME, estacion::AREA_EMPLEADOS)
+		IPCName (estacion::PATH_NAME, estacion::AREA_TAREAS)
 		, 0666 | IPC_CREAT | IPC_EXCL, args.empleados ());
 	SharedVariable<float> areaCaja (
 		IPCName (estacion::PATH_NAME, estacion::AREA_CAJA)
 		, 0666 | IPC_CREAT | IPC_EXCL);
+	ListaEntero listaEmpleados (
+		IPCName (estacion::PATH_NAME, estacion::AREA_EMPLEADOS)
+		, 0666 | IPC_CREAT | IPC_EXCL
+		, args.empleados ()
+		, semListaEmpleados);
 
 	semCaja.set(0, 1);
 	semListaSurtidores.set(0, 1);
@@ -55,6 +61,12 @@ int main(int argc, char** argv)
 	semSurtidoresLibres.set(0, args.surtidores ());
 
 	areaCaja.set (0);
+
+	listaEmpleados.debug ();
+	for (int i=args.empleados (); i > 0; i--) {
+		listaEmpleados.put (i);
+	}
+	listaEmpleados.debug ();
 
 	std::cout << "Ingrese un texto y presione ENTER para continuar." << std::endl;
 	

@@ -10,6 +10,7 @@ class ListaEntero : private NonCopyable
 {
 	Semaphore& lock;
 	SharedArray<int> lista;
+	int capacity;
 
 	public:
 		static const int EMPTY = -1;
@@ -25,6 +26,9 @@ class ListaEntero : private NonCopyable
 		int take ();
 		// Lee el entero en la cabeza de la lista
 		int peek () const;
+
+		// metodo que logea la lista
+		void debug ();
 };
 
 #endif // ESTACION_LISTAENTERO_H
