@@ -15,6 +15,8 @@ libSources = \
 	lib/system/IPCName.h \
 	lib/system/Semaphore.cc \
 	lib/system/Semaphore.h \
+	lib/system/SharedArray.h \
+	lib/system/SharedVariable.h \
 	lib/system/SignalHandler.cc \
 	lib/system/SignalHandler.h \
 	lib/system/System.cc \
