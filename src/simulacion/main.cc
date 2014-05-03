@@ -54,6 +54,11 @@ int main(int argc, char** argv)
 		, 0666 | IPC_CREAT | IPC_EXCL
 		, args.empleados ()
 		, semListaEmpleados);
+	ListaEntero listaSurtidores (
+		IPCName (estacion::PATH_NAME, estacion::AREA_SURTIDORES)
+		, 0666 | IPC_CREAT | IPC_EXCL
+		, args.surtidores ()
+		, semListaSurtidores);
 
 	semCaja.set(0, 1);
 	semListaSurtidores.set(0, 1);
@@ -67,6 +72,12 @@ int main(int argc, char** argv)
 		listaEmpleados.put (i);
 	}
 	listaEmpleados.debug ();
+
+	listaSurtidores.debug ();
+	for (int i=args.surtidores (); i > 0; i--) {
+		listaSurtidores.put (i);
+	}
+	listaSurtidores.debug ();
 
 	std::cout << "Ingrese un texto y presione ENTER para continuar." << std::endl;
 	
