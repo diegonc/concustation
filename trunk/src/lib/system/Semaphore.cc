@@ -81,6 +81,10 @@ void Semaphore::set (unsigned short idx, short value)
 
 int Semaphore::wait (unsigned short idx, short value)
 {
+	Logger& logger = LoggerRegistry::getLogger ("Semaphore");
+	logger << "Esperando el semáforo " << idx
+	       << " con el valor " << value << Logger::endl;
+
 	if (value < 0)
 		throw std::invalid_argument ("Semaphore::wait: value must be positive.");
 
