@@ -1,9 +1,12 @@
 #include <estacion/ListaEntero.h>
+#include <logging/Logger.h>
+#include <logging/LoggerRegistry.h>
 #include <system/SemaphoreLocker.h>
 
 ListaEntero::ListaEntero (IPCName name, int flags, int capacity, Semaphore& lock)
 	: lock (lock)
 	, lista (name, flags, capacity + 1)
+	, capacity (capacity)
 {
 	for (int i=0; i <= capacity; i++) {
 		lista[i] = EMPTY;
@@ -23,7 +26,7 @@ int ListaEntero::peek () const
 int ListaEntero::take ()
 {
 	SemaphoreLocker locker (lock);
-	int head = peek ();
+	int head = lista[0];
 	lista[0] = lista[head];
 	return head;
 }
@@ -31,7 +34,30 @@ int ListaEntero::take ()
 void ListaEntero::put (int i)
 {
 	SemaphoreLocker locker (lock);
-	int head = peek ();
+	int head = lista[0];
 	lista[i] = head;
 	lista[0] = i;
+}
+
+void ListaEntero::debug ()
+{
+	Logger& logger = LoggerRegistry::getLogger ("ListaEntero");
+	SemaphoreLocker locker (lock);
+
+	logger << "Arreglo: ";
+	for (int i=0; i < capacity; i++) {
+		logger << lista[i];
+		logger << ", ";
+	}
+	logger << lista[capacity] << Logger::endl;
+
+	logger << "Lista: ";
+
+	int iter = lista[0];
+	logger << iter;
+	while (iter != -1) {
+		logger << " -> " << lista[iter];
+		iter = lista[iter];
+	}
+	logger << Logger::endl;
 }
