@@ -22,7 +22,7 @@ class SharedVariable : private NonCopyable
 		SharedVariable (IPCName name, int flags);
 		~SharedVariable ();
 
-		void persistent () { _persistent = true; }
+		void persist () { _persistent = true; }
 
 		void set (const T& t) { *ptr = t; }
 		T& get () { return *ptr; }
