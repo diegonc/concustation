@@ -17,6 +17,8 @@ class ListaEntero : private NonCopyable
 		ListaEntero (IPCName name, int flags, int capacity, Semaphore& lock);
 		~ListaEntero ();
 
+		void persist () { lista.persist (); }
+
 		// Agrega el entero i en la cabeza de la lista
 		void put (int i);
 		// Remueve un entero de la cabeza de la lista.
