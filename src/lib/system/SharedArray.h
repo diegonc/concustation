@@ -1,5 +1,5 @@
-#ifndef SHAREDVARIABLE_H
-#define SHAREDVARIABLE_H
+#ifndef SHAREDARRAY_H
+#define SHAREDARRAY_H
 
 #include <logging/Logger.h>
 #include <logging/LoggerRegistry.h>
@@ -20,7 +20,7 @@ class SharedArray : private NonCopyable
 
 	public:
 		SharedArray (IPCName name, int flags, int numItems);
-		~SharedVariable ();
+		~SharedArray ();
 
 		void persistent () { _persistent = true; }
 
@@ -39,7 +39,9 @@ SharedArray<T>::SharedArray (IPCName name, int flags, int numItems)
 	logger << "ftok devolvió " << token << Logger::endl;
 	System::check (token);
 
-	id = shmget (token, sizeof(T) * numItems, flags);
+	size_t memSize = sizeof (T) * numItems;
+	logger << "Obteniendo memoria de " << memSize << " bytes" << Logger::endl;
+	id = shmget (token, memSize, flags);
 	logger << "shmget devolvió " << id << Logger::endl;
 	System::check (id);
 
@@ -61,4 +63,4 @@ SharedArray<T>::~SharedArray ()
 	}
 }
 
-#endif
+#endif // SHAREDARRAY_H
