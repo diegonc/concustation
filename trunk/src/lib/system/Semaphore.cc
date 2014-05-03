@@ -79,7 +79,7 @@ void Semaphore::set (unsigned short idx, short value)
 	semctl (id, idx, SETVAL, arg);
 }
 
-void Semaphore::wait (unsigned short idx, short value)
+int Semaphore::wait (unsigned short idx, short value)
 {
 	if (value < 0)
 		throw std::invalid_argument ("Semaphore::wait: value must be positive.");
@@ -90,18 +90,19 @@ void Semaphore::wait (unsigned short idx, short value)
 	ops.sem_op = static_cast<short>(-value);
 	ops.sem_flg = 0;
 	
-	bool retry;
-	do {
-		retry = false;
-
-		int ret = semop (id, &ops, 1);
-		if (ret == -1) {
-			if (errno == EINTR) {
-				retry = true;
-			} else
-				throw SystemErrorException ();
-		}
-	} while (retry);
+//	bool retry;
+//	do {
+//		retry = false;
+//
+	int ret = semop (id, &ops, 1);
+//		if (ret == -1) {
+//			if (errno == EINTR) {
+//				retry = true;
+//			} else
+//				throw SystemErrorException ();
+//		}
+//	} while (retry);
+	return ret;
 }
 
 void Semaphore::signal (unsigned short idx, short value)

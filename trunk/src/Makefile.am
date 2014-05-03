@@ -6,6 +6,8 @@ AM_CPPFLAGS = -I$(srcdir)/lib
 libSources = \
 	lib/estacion/Auto.h \
 	lib/estacion/constantes.h \
+	lib/estacion/ListaEntero.cc \
+	lib/estacion/ListaEntero.h \
 	lib/estacion/Tarea.h \
 	lib/logging/Logger.cc \
 	lib/logging/Logger.h \
@@ -15,6 +17,7 @@ libSources = \
 	lib/system/IPCName.h \
 	lib/system/Semaphore.cc \
 	lib/system/Semaphore.h \
+	lib/system/SemaphoreLocker.h \
 	lib/system/SharedArray.h \
 	lib/system/SharedVariable.h \
 	lib/system/SignalHandler.cc \
