@@ -16,6 +16,12 @@ namespace estacion {
 
 	/*
 	 * proj_id pasado a ftok para generar la key correspondiente a la
+	 * memoria compartida utilizada para almacenar el area de configuración.
+	 */
+	const char AREA_CONFIGURACION = 'A';
+
+	/*
+	 * proj_id pasado a ftok para generar la key correspondiente a la
 	 * memoria compartida utilizada para almacenar la asignacion de tareas.
 	 */
 	const char AREA_TAREAS = 'T';
