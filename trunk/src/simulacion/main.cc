@@ -3,6 +3,7 @@
 
 #include <estacion/constantes.h>
 #include <logging/Logger.h>
+#include <logging/LoggerRegistry.h>
 #include <system/Semaphore.h>
 
 #include <ArgParser.h>
@@ -12,8 +13,13 @@ int main(int argc, char** argv)
 
 	ArgParser& args = ArgParser::getInstance();
 	args.parse(argc, argv);
+
+	LoggerRegistry& registry = LoggerRegistry::getInstance ();
+	registry.application ("simulacion");
+	registry.filename (estacion::LOG_FILE);
+	registry.quiet (!args.debug ());
 	
-	Logger logger (estacion::LOG_FILE, "simulacion", !args.debug ());
+	Logger& logger = LoggerRegistry::getLogger ("main");
 
 	logger << "Se procesaron los argumentos del programa:" << Logger::endl;
 	logger << "Debug: " << args.debug () << Logger::endl;

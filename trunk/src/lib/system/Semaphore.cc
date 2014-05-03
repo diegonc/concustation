@@ -1,11 +1,11 @@
-#include <stdexcept>
-
 #include <errno.h>
-#include <sys/types.h>
+#include <iostream>
+#include <logging/Logger.h>
+#include <logging/LoggerRegistry.h>
+#include <stdexcept>
 #include <sys/ipc.h>
 #include <sys/sem.h>
-#include <iostream>
-
+#include <sys/types.h>
 #include <system/Semaphore.h>
 #include <system/System.h>
 
@@ -19,6 +19,11 @@ namespace {
 
 Semaphore::Semaphore (IPCName name, int nsems, int flags) : nsems (nsems)
 {
+	Logger& logger = LoggerRegistry::getLogger ("Semaphore");
+
+	logger << "Creando semáforo ["
+	       << name.path << "::" << name.index << "]" << Logger::endl;
+
 	key_t token = ftok (name.path, name.index);
 	System::check (token);
 	id = semget (token, nsems, flags);
