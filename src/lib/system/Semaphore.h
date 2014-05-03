@@ -24,7 +24,7 @@ class Semaphore : private NonCopyable
 		void initialize ();
 
 		void set (unsigned short idx, short value);
-		void wait (unsigned short idx = 0, short value = 1);
+		int wait (unsigned short idx = 0, short value = 1);
 		void signal (unsigned short idx = 0, short value = 1);
 };
 
