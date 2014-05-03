@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 
+#include <estacion/Configuracion.h>
 #include <estacion/constantes.h>
 #include <estacion/ListaEntero.h>
 #include <estacion/Tarea.h>
@@ -43,6 +44,9 @@ int main(int argc, char** argv)
 		IPCName (estacion::PATH_NAME, estacion::SEM_SURTIDORES_LIBRES)
 		, 1, 0666 | IPC_CREAT | IPC_EXCL);
 
+	SharedVariable<Configuracion> areaConfiguracion (
+		IPCName (estacion::PATH_NAME, estacion::AREA_CONFIGURACION)
+		, 0666 | IPC_CREAT | IPC_EXCL);
 	SharedArray<Tarea> areaTareas (
 		IPCName (estacion::PATH_NAME, estacion::AREA_TAREAS)
 		, 0666 | IPC_CREAT | IPC_EXCL, args.empleados ());
@@ -64,6 +68,9 @@ int main(int argc, char** argv)
 	semListaSurtidores.set(0, 1);
 	semListaEmpleados.set(0, 1);
 	semSurtidoresLibres.set(0, args.surtidores ());
+
+	areaConfiguracion.get ().empleados = args.empleados ();
+	areaConfiguracion.get ().surtidores = args.surtidores ();
 
 	areaCaja.set (0);
 
