@@ -25,6 +25,7 @@ class SharedArray : private NonCopyable
 		void persistent () { _persistent = true; }
 
 		T& operator [] (const unsigned i) { return ptr[i]; }
+		const T& operator [] (const unsigned i) const { return ptr[i]; }
 };
 
 template <typename T>
