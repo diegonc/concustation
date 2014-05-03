@@ -22,7 +22,7 @@ class SharedArray : private NonCopyable
 		SharedArray (IPCName name, int flags, int numItems);
 		~SharedArray ();
 
-		void persistent () { _persistent = true; }
+		void persist () { _persistent = true; }
 
 		T& operator [] (const unsigned i) { return ptr[i]; }
 		const T& operator [] (const unsigned i) const { return ptr[i]; }
