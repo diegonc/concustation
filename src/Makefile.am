@@ -14,6 +14,10 @@ libSources = \
 	lib/logging/LoggerRegistry.cc \
 	lib/logging/LoggerRegistry.h \
 	lib/system/EventHandler.h \
+	lib/system/FifoFilesystemObject.cc \
+	lib/system/FifoFilesystemObject.h \
+	lib/system/File.cc \
+	lib/system/File.h \
 	lib/system/IPCName.h \
 	lib/system/Semaphore.cc \
 	lib/system/Semaphore.h \
