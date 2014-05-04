@@ -7,6 +7,7 @@
 #include <estacion/Tarea.h>
 #include <logging/Logger.h>
 #include <logging/LoggerRegistry.h>
+#include <system/FifoFilesystemObject.h>
 #include <system/Semaphore.h>
 #include <system/SharedArray.h>
 #include <system/SharedVariable.h>
@@ -62,6 +63,7 @@ int main(int argc, char** argv)
 		, 0666 | IPC_CREAT | IPC_EXCL
 		, args.surtidores ()
 		, semListaSurtidores);
+	FifoFilesystemObject fifo (estacion::FIFO_NAME, 0666);
 
 	semCaja.set(0, 1);
 	semListaSurtidores.set(0, 1);
