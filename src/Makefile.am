@@ -36,6 +36,8 @@ productorAutosSources = \
 simulacionSources = \
 	simulacion/ArgParser.cc \
 	simulacion/ArgParser.h \
+	simulacion/Simulacion.cc \
+	simulacion/Simulacion.h \
 	simulacion/main.cc
 
 empleadoSources = \
