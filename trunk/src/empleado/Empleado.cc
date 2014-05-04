@@ -111,6 +111,9 @@ void Empleado::run ()
 		esperarSenial ();
 	}
 
+	Logger& logger = LoggerRegistry::getLogger ("Empleado");
+	logger << "Finalizando por señal de interrupción." << Logger::endl;
+
 	finalizarSeniales ();
 }
 
