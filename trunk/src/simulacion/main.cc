@@ -15,9 +15,8 @@
 
 int main(int argc, char** argv)
 {
-
-	ArgParser& args = ArgParser::getInstance();
-	args.parse(argc, argv);
+	ArgParser& args = ArgParser::getInstance ();
+	args.parse (argc, argv);
 
 	LoggerRegistry& registry = LoggerRegistry::getInstance ();
 	registry.application ("simulacion");
