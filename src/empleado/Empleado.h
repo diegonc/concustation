@@ -39,6 +39,10 @@ class Empleado : public EventHandler
 	void finalizarSeniales ();
 	void esperarSenial ();
 
+	// Realiza las tareas para procesar un Auto asignado por el jefe
+	// de estacion
+	void procesarAuto ();
+
 	public:
 		Empleado (int id);
 

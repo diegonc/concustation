@@ -1,7 +1,10 @@
 #include <iostream>
 #include <Empleado.h>
 #include <estacion/constantes.h>
+#include <logging/Logger.h>
+#include <logging/LoggerRegistry.h>
 #include <system/SignalHandler.h>
+#include <system/SemaphoreLocker.h>
 
 Empleado::Empleado(int id)
 	: id (id)
@@ -102,14 +105,49 @@ void Empleado::run ()
 
 	while (interrumpido == 0) {
 		if (tareaAsignada == 1) {
-			// TODO: procesar auto
-			std::cout << "Procesando auto..." << std::endl;
+			procesarAuto ();
 			tareaAsignada = 0;
 		}
-
-		std::cout << "Esperando señal..." << std::endl;
 		esperarSenial ();
 	}
 
 	finalizarSeniales ();
+}
+
+void Empleado::procesarAuto ()
+{
+	Logger& logger = LoggerRegistry::getLogger ("Empleado");
+
+	Auto tarea = areaTareas[id - 1].asignacion;
+	logger << "Comenzando el procesamiento del auto {"
+	       << "monto: " << tarea.monto << ", "
+	       << "tiempoEspera: " << tarea.tiempoEspera
+	       << "}" << Logger::endl;
+
+	// Se espera a que haya un surtidor libre, luego se toma
+	// el primero de la lista
+	SemaphoreLocker slLocker (semSurtidoresLibres);
+	int surtidor = listaSurtidores.take ();
+	logger << "El empleado " << id << " esta utilizando el surtidor "
+	       << surtidor << Logger::endl;
+
+	// Simulación del retardo por carga de combustible
+	sleep (tarea.tiempoEspera);
+
+	// Se actualiza el monto de la caja en forma atómica
+	// tomando el semáforo de la caja.
+	{
+		SemaphoreLocker locker (semCaja);
+		float montoCaja = areaCaja.get ();
+		float nuevoMonto = montoCaja + tarea.monto;
+		areaCaja.set (nuevoMonto);
+		logger << "Monto inicial: " << montoCaja << Logger::endl;
+		logger << "Nuevo monto: " << nuevoMonto << Logger::endl;
+	}
+
+	listaSurtidores.put (surtidor);
+
+	// Luego de terminar el procesamiento del auto, el epleado se
+	// agrega a la lista de empleados libres.
+	listaEmpleados.put (id);
 }
