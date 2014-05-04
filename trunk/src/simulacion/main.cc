@@ -25,6 +25,7 @@ int main(int argc, char** argv)
 	logger << "Surtidores: " << args.surtidores () << Logger::endl;
 
 	Simulacion simulacion;
+	simulacion.run ();
 
 	std::cout << "Ingrese un texto y presione ENTER para continuar." << std::endl;
 	

@@ -4,7 +4,9 @@
 #include <estacion/Configuracion.h>
 #include <estacion/ListaEntero.h>
 #include <estacion/Tarea.h>
+#include <set>
 #include <signal.h>
+#include <sys/types.h>
 #include <system/EventHandler.h>
 #include <system/FifoFilesystemObject.h>
 #include <system/Semaphore.h>
@@ -32,6 +34,8 @@ class Simulacion : public EventHandler
 	FifoFilesystemObject fifo;
 
 	volatile sig_atomic_t interrumpido;
+
+	void detenerHijos (const std::set<pid_t>& hijos);
 
 	public:
 		Simulacion ();

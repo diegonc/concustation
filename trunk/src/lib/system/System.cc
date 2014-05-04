@@ -12,7 +12,7 @@ SystemErrorException::SystemErrorException (int err) throw ()
 {
 }
 
-pid_t System::spawn (const char *file, char *const argv[])
+pid_t System::spawn (const char *file, char* const argv[])
 {
 	pid_t pid;
 
@@ -23,7 +23,5 @@ pid_t System::spawn (const char *file, char *const argv[])
 		(void) err;
 		_exit (1);
 	}
-	else if (pid == -1)
-		throw SystemErrorException ();
 	return pid;
 }

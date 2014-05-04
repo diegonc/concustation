@@ -1,7 +1,14 @@
 #include <ArgParser.h>
 #include <cassert>
 #include <estacion/constantes.h>
+#include <logging/Logger.h>
+#include <logging/LoggerRegistry.h>
+#include <set>
 #include <Simulacion.h>
+#include <sys/wait.h>
+#include <system/SignalHandler.h>
+#include <system/System.h>
+#include <vector>
 
 Simulacion::Simulacion ()
 	: semCaja (
@@ -71,4 +78,56 @@ void Simulacion::handleSignal (int signum)
 {
 	assert (signum == SIGINT);
 	interrumpido = 1;
+}
+
+void Simulacion::run ()
+{
+	SignalHandler& sh = SignalHandler::getInstance ();
+	sh.registrarHandler (SIGINT, this);
+
+	// Conjunto de PIDs correspondiente a los hijos del proceso
+	// simulación.
+	std::set<pid_t> hijos;
+	
+	ArgParser& args = ArgParser::getInstance ();
+
+	for (unsigned i=1; i <= args.empleados (); i++) {
+		std::ostringstream oss;
+		oss << i;
+		std::string empid = oss.str ();
+
+		std::vector<char*> argumentos;
+		argumentos.push_back ("./empleado");
+
+		if (args.debug ()) {
+			argumentos.push_back ("-d");
+		}
+
+		argumentos.push_back (&empid[0]);
+		argumentos.push_back (NULL);
+
+		pid_t pid = System::spawn ("./empleado", &argumentos[0]);
+		if (pid == -1) {
+			detenerHijos (hijos);
+			return;
+		}
+		hijos.insert (pid);
+	}
+
+	pid_t hijoTerminado = wait (NULL);
+	if (hijoTerminado != -1) {
+		hijos.erase (hijoTerminado);
+	}
+
+	while (!hijos.empty ()) {
+		std::set<pid_t>::iterator primero = hijos.begin ();
+		waitpid (*primero, NULL, 0);
+		hijos.erase (primero);
+	}
+}
+
+void Simulacion::detenerHijos (const std::set<pid_t>& hijos)
+{
+	Logger& logger = LoggerRegistry::getLogger ("Simulacion");
+	logger << "Deteniendo hijos..." << Logger::endl;
 }

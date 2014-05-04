@@ -27,7 +27,7 @@ class SystemErrorException : public std::exception
 class System
 {
 	public:
-		static pid_t spawn (const char *file, char *const argv[]);
+		static pid_t spawn (const char *file, char* const argv[]);
 
 		template <typename T>
 		static void check (T err)
