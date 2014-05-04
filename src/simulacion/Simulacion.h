@@ -35,7 +35,8 @@ class Simulacion : public EventHandler
 
 	volatile sig_atomic_t interrumpido;
 
-	void detenerHijos (const std::set<pid_t>& hijos);
+	void detenerHijos (std::set<pid_t>& hijos);
+	void esperarHijos (std::set<pid_t>& hijos);
 
 	public:
 		Simulacion ();
