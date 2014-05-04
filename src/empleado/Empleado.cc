@@ -17,11 +17,42 @@ Empleado::Empleado(int id)
 	, semCaja (
 		  IPCName (estacion::PATH_NAME, estacion::SEM_CAJA)
 		, 1, 0666)
+	, areaConfiguracion (
+		  IPCName (estacion::PATH_NAME, estacion::AREA_CONFIGURACION)
+		, 0666)
+	, areaTareas (
+		  IPCName (estacion::PATH_NAME, estacion::AREA_TAREAS)
+		, 0666
+		, areaConfiguracion.get ().empleados)
+	, areaCaja (
+		  IPCName (estacion::PATH_NAME, estacion::AREA_CAJA)
+		, 0666)
+	, listaEmpleados (
+		  IPCName (estacion::PATH_NAME, estacion::AREA_EMPLEADOS)
+		, 0666
+		, areaConfiguracion.get ().empleados
+		, semListaEmpleados)
+	, listaSurtidores (
+		  IPCName (estacion::PATH_NAME, estacion::AREA_SURTIDORES)
+		, 0666
+		, areaConfiguracion.get ().surtidores
+		, semListaSurtidores)
 	, interrumpido (0)
 	, tareaAsignada (0)
 {
 	sigemptyset (&unblocked);
 	sigemptyset (&oldset);
+
+	// No borrar mecanismos de IPC
+	semSurtidoresLibres.persist ();
+	semListaSurtidores.persist ();
+	semListaEmpleados.persist ();
+	semCaja.persist ();
+	areaConfiguracion.persist ();
+	areaTareas.persist ();
+	areaCaja.persist ();
+	listaEmpleados.persist ();
+	listaSurtidores.persist ();
 }
 
 void Empleado::handleSignal (int signum)

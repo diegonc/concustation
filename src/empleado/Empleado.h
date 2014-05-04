@@ -1,10 +1,14 @@
 #ifndef EMPLEADO_H
 #define EMPLEADO_H
 
+#include <estacion/Configuracion.h>
+#include <estacion/ListaEntero.h>
+#include <estacion/Tarea.h>
 #include <signal.h>
-
 #include <system/EventHandler.h>
 #include <system/Semaphore.h>
+#include <system/SharedArray.h>
+#include <system/SharedVariable.h>
 
 class Empleado : public EventHandler
 {
@@ -12,10 +16,18 @@ class Empleado : public EventHandler
 	// el area de tareas y para identificar al empleado en la lista
 	// de libres.
 	int id;
+
 	Semaphore semSurtidoresLibres;
 	Semaphore semListaSurtidores;
 	Semaphore semListaEmpleados;
 	Semaphore semCaja;
+
+	SharedVariable<Configuracion> areaConfiguracion;
+	SharedArray<Tarea> areaTareas;
+	SharedVariable<float> areaCaja;
+	ListaEntero listaEmpleados;
+	ListaEntero listaSurtidores;
+
 	volatile sig_atomic_t interrumpido;
 	volatile sig_atomic_t tareaAsignada;
 	// Señales que se desbloquean durante la suspensión
