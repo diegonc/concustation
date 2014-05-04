@@ -119,15 +119,34 @@ void Simulacion::run ()
 		hijos.erase (hijoTerminado);
 	}
 
+	esperarHijos (hijos);
+}
+
+void Simulacion::esperarHijos (std::set<pid_t>& hijos)
+{
 	while (!hijos.empty ()) {
-		std::set<pid_t>::iterator primero = hijos.begin ();
-		waitpid (*primero, NULL, 0);
-		hijos.erase (primero);
+		pid_t hijo = wait (NULL);
+		if (hijo == -1) {
+			Logger& logger = LoggerRegistry::getLogger ("Simulacion");
+			SystemErrorException e;
+			logger << "Error al esperar hijo: "
+			       << e.what () << Logger::endl;
+		}
+		hijos.erase (hijo);
 	}
 }
 
-void Simulacion::detenerHijos (const std::set<pid_t>& hijos)
+void Simulacion::detenerHijos (std::set<pid_t>& hijos)
 {
 	Logger& logger = LoggerRegistry::getLogger ("Simulacion");
 	logger << "Deteniendo hijos..." << Logger::endl;
+
+	for (std::set<pid_t>::iterator it = hijos.begin ();
+		it != hijos.end (); it++) {
+		pid_t hijo = *it;
+		logger << "Enviando señal SIGINT a hijo " << hijo << Logger::endl;
+		kill (hijo, SIGINT);
+	}
+
+	esperarHijos (hijos);
 }
