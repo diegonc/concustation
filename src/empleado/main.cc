@@ -1,17 +1,24 @@
+#include <ArgParser.h>
 #include <Empleado.h>
 #include <estacion/constantes.h>
 #include <logging/LoggerRegistry.h>
 
 int main (int argc, char **argv)
 {
+	ArgParser& args = ArgParser::getInstance ();
+	args.parse (argc, argv);
+	
 	LoggerRegistry& registry = LoggerRegistry::getInstance ();
 	registry.filename (estacion::LOG_FILE);
 	registry.application ("empleado");
-	// TODO: parsear argv y obtener el flag de depuración
-	registry.quiet (false);
+	registry.quiet (!args.debug ());
 
-	// TODO: parsear argv y obtener el id del empleado
-	Empleado empleado (1);
+	Logger& logger = LoggerRegistry::getLogger ("main");
+	logger << "Se procesaron los argumentos del programa:" << Logger::endl;
+	logger << "Debug: " << args.debug () << Logger::endl;
+	logger << "Id: " << args.id () << Logger::endl;
+
+	Empleado empleado (args.id ());
 	empleado.run ();
 	return 0;
 }

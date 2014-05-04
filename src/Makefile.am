@@ -35,6 +35,8 @@ simulacionSources = \
 	simulacion/main.cc
 
 empleadoSources = \
+	empleado/ArgParser.cc \
+	empleado/ArgParser.h \
 	empleado/Empleado.cc \
 	empleado/Empleado.h \
 	empleado/main.cc
