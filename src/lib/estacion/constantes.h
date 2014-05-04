@@ -3,6 +3,11 @@
 
 namespace estacion {
 	/*
+	 * nombre del FIFO desde donde el jefe de estación toma los autos.
+	 */
+	const char* const FIFO_NAME = "simulacion.fifo";
+
+	/*
 	 * nombre del archivo de log donde se guardan los mensajes
 	 * informativos generados por el programa.
 	 */
