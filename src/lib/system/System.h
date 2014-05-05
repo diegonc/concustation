@@ -10,7 +10,7 @@
 class SystemErrorException : public std::exception
 {
 	private:
-		int number;
+		int _number;
 
 	public:
 		SystemErrorException () throw ();
@@ -20,8 +20,10 @@ class SystemErrorException : public std::exception
 
 		virtual const char *what() const throw()
 		{
-			return strerror (this->number);
+			return strerror (this->_number);
 		}
+
+		int number () const { return _number; }
 };
 
 class System
