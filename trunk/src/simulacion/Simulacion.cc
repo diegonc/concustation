@@ -97,10 +97,10 @@ void Simulacion::run ()
 		std::string empid = oss.str ();
 
 		std::vector<char*> argumentos;
-		argumentos.push_back ("./empleado");
+		argumentos.push_back (const_cast<char*> ("./empleado"));
 
 		if (args.debug ()) {
-			argumentos.push_back ("-d");
+			argumentos.push_back (const_cast<char*> ("-d"));
 		}
 
 		argumentos.push_back (&empid[0]);
@@ -112,6 +112,7 @@ void Simulacion::run ()
 			return;
 		}
 		hijos.insert (pid);
+		areaTareas[i - 1].owner = pid;
 	}
 
 	pid_t hijoTerminado = wait (NULL);
@@ -131,8 +132,9 @@ void Simulacion::esperarHijos (std::set<pid_t>& hijos)
 			SystemErrorException e;
 			logger << "Error al esperar hijo: "
 			       << e.what () << Logger::endl;
+		} else {
+			hijos.erase (hijo);
 		}
-		hijos.erase (hijo);
 	}
 }
 
