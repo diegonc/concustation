@@ -24,15 +24,29 @@ class LoggerRegistry : private NonCopyable
 		{
 			_filename = theFileName;
 		}
+		const std::string& filename () const
+		{
+			return _filename;
+		}
 
 		void application (const std::string& theApplication)
 		{
 			_application = theApplication;
 		}
 
+		const std::string& application () const
+		{
+			return _application;
+		}
+
 		void quiet (bool isQuiet)
 		{
 			_quiet = isQuiet;
+		}
+
+		bool quiet () const
+		{
+			return _quiet;
 		}
 };
 
