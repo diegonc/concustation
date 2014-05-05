@@ -90,6 +90,7 @@ void Simulacion::run ()
 	std::set<pid_t> hijos;
 	
 	ArgParser& args = ArgParser::getInstance ();
+	Logger& logger = LoggerRegistry::getLogger ("Simulacion");
 
 	for (unsigned i=1; i <= args.empleados (); i++) {
 		std::ostringstream oss;
@@ -106,11 +107,21 @@ void Simulacion::run ()
 		argumentos.push_back (&empid[0]);
 		argumentos.push_back (NULL);
 
+		logger << "Ejecutando:";
+		for (size_t arg=0; arg < argumentos.size () - 1; arg++) {
+			logger << " " << argumentos[arg];
+		}
+		logger << Logger::endl;
+
 		pid_t pid = System::spawn ("./empleado", &argumentos[0]);
 		if (pid == -1) {
+			SystemErrorException e;
+			logger << "Fallo al crear empleado: "
+			       << e.what () << Logger::endl;
 			detenerHijos (hijos);
 			return;
 		}
+		logger << "Proceso hijo: " << pid << Logger::endl;
 		hijos.insert (pid);
 		areaTareas[i - 1].owner = pid;
 	}
