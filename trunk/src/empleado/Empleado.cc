@@ -129,28 +129,40 @@ void Empleado::procesarAuto ()
 
 	// Se espera a que haya un surtidor libre, luego se toma
 	// el primero de la lista
+	logger << "Bloqueando el semáforo de surtidores libres."
+	       << Logger::endl;
 	SemaphoreLocker slLocker (semSurtidoresLibres);
 	int surtidor = listaSurtidores.take ();
 	logger << "El empleado " << id << " esta utilizando el surtidor "
 	       << surtidor << Logger::endl;
 
 	// Simulación del retardo por carga de combustible
+	logger << "Esperando recarga (" << tarea.tiempoEspera
+	       << " segundos)" << Logger::endl;
 	sleep (tarea.tiempoEspera);
 
 	// Se actualiza el monto de la caja en forma atómica
 	// tomando el semáforo de la caja.
 	{
+		logger << "Bloqueando el semáforo de caja."
+		       << Logger::endl;
 		SemaphoreLocker locker (semCaja);
 		float montoCaja = areaCaja.get ();
 		float nuevoMonto = montoCaja + tarea.monto;
 		areaCaja.set (nuevoMonto);
 		logger << "Monto inicial: " << montoCaja << Logger::endl;
 		logger << "Nuevo monto: " << nuevoMonto << Logger::endl;
+		logger << "Desbloqueado el semáforo de caja."
+		       << Logger::endl;
 	}
 
+	logger << "Devolviendo el surtidor " << surtidor
+	       << Logger::endl;
 	listaSurtidores.put (surtidor);
 
 	// Luego de terminar el procesamiento del auto, el epleado se
 	// agrega a la lista de empleados libres.
+	logger << "Devolviendo el epleado " << id
+	       << Logger::endl;
 	listaEmpleados.put (id);
 }
