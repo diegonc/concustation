@@ -101,6 +101,8 @@ void Empleado::esperarSenial ()
 
 void Empleado::run ()
 {
+	Logger& logger = LoggerRegistry::getLogger ("Empleado");
+
 	inicializarSeniales ();
 
 	while (interrumpido == 0) {
@@ -108,10 +110,10 @@ void Empleado::run ()
 			procesarAuto ();
 			tareaAsignada = 0;
 		}
+		logger << "esperando asignación..." << Logger::endl;
 		esperarSenial ();
 	}
 
-	Logger& logger = LoggerRegistry::getLogger ("Empleado");
 	logger << "Finalizando por señal de interrupción." << Logger::endl;
 
 	finalizarSeniales ();
@@ -165,9 +167,9 @@ void Empleado::procesarAuto ()
 		       << Logger::endl;
 		listaSurtidores.put (surtidor);
 
-		// Luego de terminar el procesamiento del auto, el epleado se
+		// Luego de terminar el procesamiento del auto, el empleado se
 		// agrega a la lista de empleados libres.
-		logger << "Devolviendo el epleado " << id
+		logger << "Devolviendo el empleado " << id
 		       << Logger::endl;
 		listaEmpleados.put (id);
 
