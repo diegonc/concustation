@@ -79,12 +79,14 @@ Logger& Logger::endl (Logger& logger)
 		logger.open ();
 	}
 
-	Locker grabLock (logger);
-	do {
-		written = write (logger.fd, data, remaining);
-		System::check (written);
-		remaining -= written;
-	} while (remaining > 0);
+	{
+		Locker grabLock (logger);
+		do {
+			written = write (logger.fd, data, remaining);
+			System::check (written);
+			remaining -= written;
+		} while (remaining > 0);
+	}
 
 	logger.buffer.str ("");
 	logger.printedModule = false;
