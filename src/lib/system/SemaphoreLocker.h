@@ -1,6 +1,8 @@
 #ifndef SEMAPHORELOCKER_H
 #define SEMAPHORELOCKER_H
 
+#include <logging/Logger.h>
+#include <logging/LoggerRegistry.h>
 #include <system/Semaphore.h>
 #include <system/System.h>
 
@@ -18,7 +20,14 @@ class SemaphoreLocker
 
 		~SemaphoreLocker ()
 		{
-			sem.signal ();
+			try {
+				sem.signal ();
+			} catch (SystemErrorException& e) {
+				Logger& logger = LoggerRegistry::getLogger ("SemaphoreLocker");
+				logger << "Se atrapó una excepción al desbloquear el semaforo: "
+				       << e.what ()
+				       << Logger::endl;
+			}
 		}
 };
 #endif // SEMAPHORELOCKER_H
