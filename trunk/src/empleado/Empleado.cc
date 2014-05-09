@@ -132,6 +132,10 @@ void Empleado::procesarAuto ()
 	logger << "Bloqueando el semáforo de surtidores libres."
 	       << Logger::endl;
 	SemaphoreLocker slLocker (semSurtidoresLibres);
+
+	logger << "Hay surtidores libres, tomando uno de la lista..."
+	       << Logger::endl;
+
 	int surtidor = listaSurtidores.take ();
 	logger << "El empleado " << id << " esta utilizando el surtidor "
 	       << surtidor << Logger::endl;
@@ -165,4 +169,7 @@ void Empleado::procesarAuto ()
 	logger << "Devolviendo el epleado " << id
 	       << Logger::endl;
 	listaEmpleados.put (id);
+
+	logger << "Desbloqueando el semáforo de surtidores libres..."
+	       << Logger::endl;
 }
