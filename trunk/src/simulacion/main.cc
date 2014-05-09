@@ -24,13 +24,12 @@ int main(int argc, char** argv)
 	logger << "Empleados: " << args.empleados () << Logger::endl;
 	logger << "Surtidores: " << args.surtidores () << Logger::endl;
 
-	Simulacion simulacion;
-	simulacion.run ();
-
-	std::cout << "Ingrese un texto y presione ENTER para continuar." << std::endl;
-	
-	std::string tmp;
-	std::cin >> tmp;
+	try {
+		Simulacion simulacion;
+		simulacion.run ();
+	} catch (std::exception& e) {
+		// Correr destructores por favor
+	}
 
 	return 0;
 }
