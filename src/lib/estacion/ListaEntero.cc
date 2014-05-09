@@ -8,8 +8,12 @@ ListaEntero::ListaEntero (IPCName name, int flags, int capacity, Semaphore& lock
 	, lista (name, flags, capacity + 1)
 	, capacity (capacity)
 {
-	for (int i=0; i <= capacity; i++) {
-		lista[i] = EMPTY;
+	if ((flags & IPC_CREAT) != 0) {
+		for (int i=0; i <= capacity; i++) {
+			lista[i] = EMPTY;
+		}
+	} else {
+		debug ();
 	}
 }
 
@@ -25,6 +29,7 @@ int ListaEntero::peek () const
 
 int ListaEntero::take ()
 {
+	lock.debug ();
 	SemaphoreLocker locker (lock);
 	int head = lista[0];
 	lista[0] = lista[head];
