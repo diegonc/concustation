@@ -58,12 +58,23 @@ void Logger::open ()
 
 void Logger::lock () const
 {
-	// TODO: implementar bloqueo
+	struct flock lck;
+	lck.l_type = F_WRLCK;
+	lck.l_whence = SEEK_END;
+	lck.l_start = 0;
+	lck.l_len = 0;
+	int err = fcntl (fd, F_SETLKW, &lck);
+	System::check (err);
 }
 
 void Logger::unlock () const
 {
-	// TODO: implementar bloqueo
+	struct flock lck;
+	lck.l_type = F_UNLCK;
+	lck.l_whence = SEEK_END;
+	lck.l_start = 0;
+	lck.l_len = 0;
+	fcntl (fd, F_SETLK, &lck);
 }
 
 Logger& Logger::endl (Logger& logger)
