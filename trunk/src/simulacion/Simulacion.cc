@@ -126,6 +126,34 @@ void Simulacion::run ()
 		areaTareas[i - 1].owner = pid;
 	}
 
+	// Luego de inicializar por completo el area de tareas
+	// se lanza el proceso jefe.
+	{
+		std::vector<char*> argumentos;
+		argumentos.push_back (const_cast<char*> ("./jefe"));
+		if (args.debug ()) {
+			argumentos.push_back (const_cast<char*> ("-d"));
+		}
+		argumentos.push_back (NULL);
+
+		logger << "Ejecutando:";
+		for (size_t arg=0; arg < argumentos.size () - 1; arg++) {
+			logger << " " << argumentos[arg];
+		}
+		logger << Logger::endl;
+
+		pid_t pid = System::spawn ("./jefe", &argumentos[0]);
+		if (pid == -1) {
+			SystemErrorException e;
+			logger << "Fallo al crear jefe: "
+			       << e.what () << Logger::endl;
+			detenerHijos (hijos);
+			return;
+		}
+		logger << "Proceso hijo: " << pid << Logger::endl;
+		hijos.insert (pid);
+	}
+
 	pid_t hijoTerminado = wait (NULL);
 	if (hijoTerminado != -1) {
 		hijos.erase (hijoTerminado);

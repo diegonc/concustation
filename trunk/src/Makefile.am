@@ -47,14 +47,26 @@ empleadoSources = \
 	empleado/Empleado.h \
 	empleado/main.cc
 
+jefeSources = \
+	jefe/ArgParser.cc \
+	jefe/ArgParser.h \
+	jefe/Jefe.cc \
+	jefe/Jefe.h \
+	jefe/main.cc
+
 bin_PROGRAMS = \
 	empleado/empleado \
+	jefe/jefe \
 	productor-autos/productor-autos \
 	simulacion/simulacion
 
 empleado_empleado_SOURCES = $(empleadoSources) $(libSources)
 empleado_empleado_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/empleado
 #empleado_empleado_LDADD =
+
+jefe_jefe_SOURCES = $(jefeSources) $(libSources)
+jefe_jefe_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/jefe
+#jefe_jefe_LDADD =
 
 productor_autos_productor_autos_SOURCES = $(productorAutosSources) $(libSources)
 productor_autos_produtor_autos_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/productor-autos
