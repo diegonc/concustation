@@ -155,11 +155,18 @@ void Simulacion::run ()
 	}
 
 	pid_t hijoTerminado = wait (NULL);
+	logger << "Esperando que se detengan los hijos..." << Logger::endl;
 	if (hijoTerminado != -1) {
+		logger << "pid " << hijoTerminado
+		       << " ya terminó"
+		       << Logger::endl;
 		hijos.erase (hijoTerminado);
 	}
 
 	esperarHijos (hijos);
+
+	logger << "Todos los hijos terminaron. "
+	       << "Finalizando simulación." << Logger::endl;
 }
 
 void Simulacion::esperarHijos (std::set<pid_t>& hijos)
