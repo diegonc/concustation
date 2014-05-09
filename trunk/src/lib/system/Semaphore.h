@@ -26,6 +26,8 @@ class Semaphore : private NonCopyable
 		void set (unsigned short idx, short value);
 		int wait (unsigned short idx = 0, short value = 1);
 		void signal (unsigned short idx = 0, short value = 1);
+
+		void debug () const;
 };
 
 #endif

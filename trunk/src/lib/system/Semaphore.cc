@@ -57,7 +57,8 @@ Semaphore::~Semaphore ()
 void Semaphore::initialize ()
 {
 	Logger& logger = LoggerRegistry::getLogger ("Semaphore");
-	logger << "Inicializando semáforo en 0" << Logger::endl;
+	logger << "Inicializando el conjunto de semáforos con id "
+               << id << " en 0" << Logger::endl;
 
 	for (unsigned short i=0; i < nsems; i++)
 		set (i, 0);
@@ -71,7 +72,8 @@ void Semaphore::persist ()
 void Semaphore::set (unsigned short idx, short value)
 {
 	Logger& logger = LoggerRegistry::getLogger ("Semaphore");
-	logger << "Seteando el semáforo " << idx
+	logger << "Seteando el semáforo " << id
+	       << " indice " << idx
 	       << " con el valor " << value << Logger::endl;
 
 	union semun arg;
@@ -82,7 +84,8 @@ void Semaphore::set (unsigned short idx, short value)
 int Semaphore::wait (unsigned short idx, short value)
 {
 	Logger& logger = LoggerRegistry::getLogger ("Semaphore");
-	logger << "Esperando el semáforo " << idx
+	logger << "Esperando el semáforo " << id
+	       << " indice " << idx
 	       << " con el valor " << value << Logger::endl;
 
 	if (value < 0)
@@ -112,7 +115,8 @@ int Semaphore::wait (unsigned short idx, short value)
 void Semaphore::signal (unsigned short idx, short value)
 {
 	Logger& logger = LoggerRegistry::getLogger ("Semaphore");
-	logger << "Señalizando el semáforo " << idx
+	logger << "Señalizando el semáforo " << id
+	       << " indice " << idx
 	       << " con el valor " << value << Logger::endl;
 
 	if (value < 0)
@@ -124,4 +128,16 @@ void Semaphore::signal (unsigned short idx, short value)
 	ops.sem_op = value;
 	ops.sem_flg = 0;
 	System::check (semop (id, &ops, 1));
+}
+
+void Semaphore::debug () const
+{
+	Logger& logger = LoggerRegistry::getLogger ("Semaphore");
+	for (int i=0; i < nsems; i++) {
+		int val = semctl (id, i, GETVAL);
+		logger << "Semaforo " << id
+		       << " indice " << i
+		       << " tiene el valor " << val
+		       << Logger::endl;
+	}
 }
