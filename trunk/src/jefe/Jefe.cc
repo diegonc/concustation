@@ -27,6 +27,10 @@ Jefe::Jefe ()
 		, semListaEmpleados)
 	, interrumpido (0)
 {
+	areaConfiguracion.persist ();
+	areaTareas.persist ();
+	semListaEmpleados.persist ();
+	listaEmpleados.persist ();
 }
 
 Jefe::~Jefe ()
