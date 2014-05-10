@@ -92,6 +92,9 @@ void Simulacion::run ()
 	ArgParser& args = ArgParser::getInstance ();
 	Logger& logger = LoggerRegistry::getLogger ("Simulacion");
 
+	logger << "simulacion corriendo con pid " << getpid ()
+	       << Logger::endl;
+
 	for (unsigned i=1; i <= args.empleados (); i++) {
 		std::ostringstream oss;
 		oss << i;

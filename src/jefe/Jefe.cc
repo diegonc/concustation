@@ -43,6 +43,10 @@ void Jefe::run ()
 	sh.registrarHandler (SIGINT, this);
 
 	Logger& logger = LoggerRegistry::getLogger ("Jefe");
+
+	logger << "jefe corriendo con pid " << getpid ()
+	       << Logger::endl;
+
 	while (interrumpido == 0) {
 		logger << "Se llama a aceptarAutos." << Logger::endl;
 		int err = aceptarAutos ();
