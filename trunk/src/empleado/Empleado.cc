@@ -103,6 +103,9 @@ void Empleado::run ()
 {
 	Logger& logger = LoggerRegistry::getLogger ("Empleado");
 
+	logger << "empleado corriendo con pid " << getpid ()
+	       << Logger::endl;
+
 	inicializarSeniales ();
 
 	while (interrumpido == 0) {
@@ -149,7 +152,7 @@ void Empleado::procesarAuto ()
 
 		sleep (tarea.tiempoEspera);
 
-		logger << "Recarga finalizada."
+		logger << "Recarga finalizada. "
 		       << "Se acreditará el monto en la caja."
 		       << Logger::endl;
 
