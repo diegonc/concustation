@@ -146,7 +146,12 @@ void Empleado::procesarAuto ()
 		// Simulación del retardo por carga de combustible
 		logger << "Esperando recarga (" << tarea.tiempoEspera
 		       << " segundos)" << Logger::endl;
+
 		sleep (tarea.tiempoEspera);
+
+		logger << "Recarga finalizada."
+		       << "Se acreditará el monto en la caja."
+		       << Logger::endl;
 
 		// Se actualiza el monto de la caja en forma atómica
 		// tomando el semáforo de la caja.
