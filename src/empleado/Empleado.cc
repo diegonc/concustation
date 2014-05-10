@@ -176,7 +176,8 @@ void Empleado::procesarAuto ()
 		logger << "Desbloqueando el semáforo de surtidores libres..."
 		       << Logger::endl;
 	} catch (SystemErrorException& e) {
-		logger << "Se atrapo una excepción al procesar el auto ("
+		logger << "Se atrapo una excepción al procesar el auto: "
+		       << e.number () << "("
 		       << e.what () << ")" << Logger::endl;
 		logger << "Saliendo del método..." << Logger::endl;
 	}
