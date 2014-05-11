@@ -57,11 +57,19 @@ jefeSources = \
 	jefe/Jefe.cc \
 	jefe/Jefe.h \
 	jefe/main.cc
+	
+administradorSources = \
+	administrador/ArgParser.cc \
+	administrador/ArgParser.h \
+	administrador/Administrador.cc \
+	administrador/Administrador.h \
+	administrador/main.cc
 
 bin_PROGRAMS = \
 	empleado/empleado \
 	jefe/jefe \
 	productor-autos/productor-autos \
+	administrador/administrador \
 	simulacion/simulacion
 
 empleado_empleado_SOURCES = $(empleadoSources) $(libSources)
@@ -74,7 +82,11 @@ jefe_jefe_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/jefe
 
 productor_autos_productor_autos_SOURCES = $(productorAutosSources) $(libSources)
 productor_autos_productor_autos_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/productor-autos
-#produtor_autos_produtor_autos_LDADD = 
+#produtor_autos_produtor_autos_LDADD =
+
+administrador_administrador_SOURCES = $(administradorSources) $(libSources)
+administrador_administrador_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/administrador 
+#administrador_administrador_LDADD =
 
 simulacion_simulacion_SOURCES = $(simulacionSources) $(libSources)
 simulacion_simulacion_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/simulacion

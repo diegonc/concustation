@@ -157,6 +157,33 @@ void Simulacion::run ()
 		hijos.insert (pid);
 	}
 
+	// luego se lanza el proceso administrador
+	{
+		std::vector<char*> argumentos;
+		argumentos.push_back (const_cast<char*> ("./administrador"));
+		if (args.debug ()) {
+			argumentos.push_back (const_cast<char*> ("-d"));
+		}
+		argumentos.push_back (NULL);
+
+		logger << "Ejecutando:";
+		for (size_t arg=0; arg < argumentos.size () - 1; arg++) {
+			logger << " " << argumentos[arg];
+		}
+		logger << Logger::endl;
+
+		pid_t pid = System::spawn ("./administrador", &argumentos[0]);
+		if (pid == -1) {
+			SystemErrorException e;
+			logger << "Fallo al crear administrador: "
+			       << e.what () << Logger::endl;
+			detenerHijos (hijos);
+			return;
+		}
+		logger << "Proceso hijo: " << pid << Logger::endl;
+		hijos.insert (pid);
+	}
+
 	// el ultimo proceso que se lanza es el productor de autos
 	{
 		std::vector<char*> argumentos;
