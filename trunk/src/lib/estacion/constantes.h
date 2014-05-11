@@ -76,12 +76,22 @@ namespace estacion {
 	const char SEM_CAJA = 'c';
 
 	/*
-	 * valor que pagará el cliente por cada litro de combustible cargado
+	 * tiempo medio (en segundos) entre consultas del administrador
+	 */
+	const int MEDIA_ENTRE_CONSULTAS_ADM = 20;
+
+	/*
+	 * tiempo medio (en segundos) que dura la consulta del administrador
+	 */
+	const int MEDIA_CONSULTA_ADM = 5;
+
+	/*
+	 * tiempo medio (en segundos) que tarda un auto en llegar a la estación
 	 */
 	const int MEDIA_LLEGADA_AUTOS = 10;
 
 	/*
-	 * valor que pagará el cliente por cada litro de combustible cargado
+	 * valor medio de los litros de combustible que cargará cada auto
 	 */
 	const int MEDIA_LITROS_AUTO = 10;
 
