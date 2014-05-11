@@ -74,6 +74,27 @@ namespace estacion {
 	 * semaforo que protege la caja.
 	 */
 	const char SEM_CAJA = 'c';
+
+	/*
+	 * valor que pagará el cliente por cada litro de combustible cargado
+	 */
+	const int MEDIA_LLEGADA_AUTOS = 10;
+
+	/*
+	 * valor que pagará el cliente por cada litro de combustible cargado
+	 */
+	const int MEDIA_LITROS_AUTO = 10;
+
+	/*
+	 * valor que pagará el cliente por cada litro de combustible cargado
+	 */
+	const float PRECIO_LITRO = 10;
+
+	/*
+	 * tiempo en segundos que esperará el cliente por cada litro de combustible cargado
+	 */
+	const float TIEMPO_LITRO = 1;
+
 }
 
 #endif // ESTACION_CONSTANTES_H

@@ -61,6 +61,7 @@ int Jefe::aceptarAutos ()
 
 	Logger& logger = LoggerRegistry::getLogger ("Jefe");
 	try {
+		logger << "Esperando la llegada de algún auto..." << Logger::endl;
 		File fifo (estacion::FIFO_NAME, O_RDONLY);
 		Auto elAuto;
 		ssize_t err;
@@ -93,8 +94,7 @@ int Jefe::aceptarAutos ()
 				// Recibimos un Auto desde el fifo
 				// Se lo despacha
 				logger << "Se recibio el auto: {"
-				       << "monto: " << elAuto.monto
-				       << ", tiempoEspera: " << elAuto.tiempoEspera
+				       << "litros: " << elAuto.litros
 				       << "}" << Logger::endl;
 				despacharAuto (elAuto);
 			}
@@ -115,8 +115,7 @@ void Jefe::despacharAuto (const Auto& elAuto)
 {
 	Logger& logger = LoggerRegistry::getLogger ("Jefe");
 
-	logger << "Despachando auto: { monto: " << elAuto.monto
-	       << ", tiempoEspera: " << elAuto.tiempoEspera << "}"
+	logger << "Despachando auto: {litros: " << elAuto.litros << "}"
 	       << Logger::endl;
 
 	logger << "Tomando un empleado de la lista." << Logger::endl;
