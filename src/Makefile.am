@@ -31,6 +31,10 @@ libSources = \
 	lib/utils/NonCopyable.h
 
 productorAutosSources = \
+	productor-autos/ArgParser.cc \
+	productor-autos/ArgParser.h \
+	productor-autos/ProductorAutos.cc \
+	productor-autos/ProductorAutos.h \
 	productor-autos/main.cc
 
 simulacionSources = \
@@ -69,7 +73,7 @@ jefe_jefe_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/jefe
 #jefe_jefe_LDADD =
 
 productor_autos_productor_autos_SOURCES = $(productorAutosSources) $(libSources)
-productor_autos_produtor_autos_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/productor-autos
+productor_autos_productor_autos_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/productor-autos
 #produtor_autos_produtor_autos_LDADD = 
 
 simulacion_simulacion_SOURCES = $(simulacionSources) $(libSources)

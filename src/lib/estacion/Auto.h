@@ -3,8 +3,7 @@
 
 struct Auto
 {
-	float monto;
-	int tiempoEspera;
+	int litros;
 };
 
 #endif // ESTACION_AUTO_H

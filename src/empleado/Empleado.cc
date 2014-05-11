@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdlib.h>
 #include <Empleado.h>
 #include <estacion/constantes.h>
 #include <logging/Logger.h>
@@ -129,9 +130,7 @@ void Empleado::procesarAuto ()
 
 		Auto tarea = areaTareas[id - 1].asignacion;
 		logger << "Comenzando el procesamiento del auto {"
-		       << "monto: " << tarea.monto << ", "
-		       << "tiempoEspera: " << tarea.tiempoEspera
-		       << "}" << Logger::endl;
+		       << "litros: " << tarea.litros << "}" << Logger::endl;
 
 		// Se espera a que haya un surtidor libre, luego se toma
 		// el primero de la lista
@@ -147,10 +146,11 @@ void Empleado::procesarAuto ()
 		       << surtidor << Logger::endl;
 
 		// Simulación del retardo por carga de combustible
-		logger << "Esperando recarga (" << tarea.tiempoEspera
+		int tiempoEspera = tarea.litros * estacion::TIEMPO_LITRO;
+		logger << "Esperando recarga (" << tiempoEspera
 		       << " segundos)" << Logger::endl;
 
-		sleep (tarea.tiempoEspera);
+		sleep (tiempoEspera);
 
 		logger << "Recarga finalizada. "
 		       << "Se acreditará el monto en la caja."
@@ -163,7 +163,7 @@ void Empleado::procesarAuto ()
 			       << Logger::endl;
 			SemaphoreLocker locker (semCaja);
 			float montoCaja = areaCaja.get ();
-			float nuevoMonto = montoCaja + tarea.monto;
+			float nuevoMonto = montoCaja + (tarea.litros * estacion::PRECIO_LITRO);
 			areaCaja.set (nuevoMonto);
 			logger << "Monto inicial: " << montoCaja << Logger::endl;
 			logger << "Nuevo monto: " << nuevoMonto << Logger::endl;
