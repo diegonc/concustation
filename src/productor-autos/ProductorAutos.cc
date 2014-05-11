@@ -35,7 +35,14 @@ void ProductorAutos::run ()
 		// simulación del tiempo de llegada de 1 auto
 		int tiempo = (rand() % (2 * estacion::MEDIA_LLEGADA_AUTOS)) + 1;
 		logger << "Faltan " << tiempo << " segundos para la llegada de un auto." << Logger::endl;
-		sleep(tiempo);
+		int faltante = sleep(tiempo);
+		if (faltante > 0) {
+			// se interrumpio la llamada a sleep.
+			// vuelvo a verificar la bandera de interrupción
+			if (interrumpido == 1) {
+				break;
+			}
+		}
 
 		logger << "Se llama a producirAutos." << Logger::endl;
 		int err = producirAutos ();
