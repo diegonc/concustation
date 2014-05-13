@@ -6,6 +6,7 @@ AM_CPPFLAGS = -I$(srcdir)/lib
 libSources = \
 	lib/estacion/Auto.h \
 	lib/estacion/constantes.h \
+	lib/estacion/Configuracion.h \
 	lib/estacion/ListaEntero.cc \
 	lib/estacion/ListaEntero.h \
 	lib/estacion/Tarea.h \
