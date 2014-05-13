@@ -7,6 +7,7 @@ class ArgParser : private NonCopyable
 {
 	private:
 		bool _debug;
+		int _burstSize;
 
 		ArgParser();
 		~ArgParser();
@@ -19,6 +20,8 @@ class ArgParser : private NonCopyable
 		void parse (int argc, char **argv);
 
 		bool debug () const { return _debug; }
+
+		int burstSize () const { return _burstSize; }
 };
 
 #endif
