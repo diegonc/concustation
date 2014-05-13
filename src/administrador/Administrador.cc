@@ -1,6 +1,8 @@
+#include <ArgParser.h>
 #include <assert.h>
 #include <Administrador.h>
 #include <estacion/constantes.h>
+#include <iostream>
 #include <logging/Logger.h>
 #include <logging/LoggerRegistry.h>
 #include <signal.h>
@@ -36,6 +38,12 @@ void Administrador::run ()
 	logger << "administrador corriendo con pid " << getpid ()
 	       << Logger::endl;
 
+	ArgParser& args = ArgParser::getInstance ();
+	if (args.once ()) {
+		imprimirCaja ();
+		return;
+	}
+
 	srand ( time(NULL) );
 
 	while (interrumpido == 0) {
@@ -49,6 +57,16 @@ void Administrador::run ()
 		logger << "consultarCaja devolvió " << err << Logger::endl;
 	}
 	logger << "Finalizando el proceso" << Logger::endl;
+}
+
+void Administrador::imprimirCaja ()
+{
+	Logger& logger = LoggerRegistry::getLogger ("Administrador");
+	logger << "Bloqueando el semáforo de caja." << Logger::endl;
+	
+	SemaphoreLocker locker (semCaja);
+	float montoCaja = areaCaja.get ();
+	std::cout << "Caja: " << montoCaja << std::endl;	
 }
 
 int Administrador::consultarCaja ()
@@ -66,12 +84,13 @@ int Administrador::consultarCaja ()
 		logger << "Monto en caja: " << montoCaja << Logger::endl;
 		logger << "Desbloqueado el semáforo de caja."
 			   << Logger::endl;
-
+		return 0;
 	} catch (SystemErrorException& e) {
 		logger << "Se atrapo una excepción al consultar la caja: "
 		       << e.number () << "("
 		       << e.what () << ")" << Logger::endl;
 		logger << "Saliendo del método..." << Logger::endl;
+		return e.number ();
 	}
 }
 

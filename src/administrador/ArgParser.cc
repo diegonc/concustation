@@ -10,6 +10,9 @@ int parserFunc (int key, char *arg, struct argp_state *state)
 		case 'd':
 			argParser->_debug = true;
 			break;
+		case 'o':
+			argParser->_once = true;
+			break;
 		case ARGP_KEY_END:
 			if (state->arg_num > 0) {
 				argp_failure(state, 1, 0, "too many arguments");
@@ -22,13 +25,14 @@ int parserFunc (int key, char *arg, struct argp_state *state)
 namespace {
 	struct argp_option options[] = {
 		{ "debug", 'd', 0, 0, "Enable debug mode"},
+		{ "once", 'o', 0, 0, "Print amount and exit"},
 		{ 0 }
 	};
 
 	struct argp optionParser = { options, parserFunc };
 }
 
-ArgParser::ArgParser () : _debug(false)
+ArgParser::ArgParser () : _debug(false), _once(false)
 {
 }
 

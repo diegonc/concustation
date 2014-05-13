@@ -14,6 +14,7 @@ class Administrador : public EventHandler
 	volatile sig_atomic_t interrumpido;
 
 	int consultarCaja ();
+	void imprimirCaja ();
 
 	public:
 		Administrador ();
