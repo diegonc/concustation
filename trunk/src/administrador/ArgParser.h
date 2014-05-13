@@ -7,6 +7,7 @@ class ArgParser : private NonCopyable
 {
 	private:
 		bool _debug;
+		bool _once;
 
 		ArgParser();
 		~ArgParser();
@@ -19,6 +20,7 @@ class ArgParser : private NonCopyable
 		void parse (int argc, char **argv);
 
 		bool debug () const { return _debug; }
+		bool once () const { return _once; }
 };
 
 #endif
