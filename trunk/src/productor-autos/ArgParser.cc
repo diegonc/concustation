@@ -14,7 +14,7 @@ int parserFunc (int key, char *arg, struct argp_state *state)
 		{
 			char* endptr;
 			long burstSize = strtol (arg, &endptr, 10);
-			if (*endptr != '\0' || burstSize == 0) {
+			if (*endptr != '\0' || burstSize <= 0) {
 				argp_failure (state, 1, 0, "BURST_SIZE must be a number greater than 0");
 			} else {
 				argParser->_burstSize = static_cast<int> (burstSize);
