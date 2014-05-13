@@ -9,6 +9,8 @@ class ProductorAutos : public EventHandler
 	volatile sig_atomic_t interrumpido;
 
 	int producirAutos ();
+	void producirConEspera ();
+	void producirRafaga (int cantidad);
 
 	public:
 		ProductorAutos ();

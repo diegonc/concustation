@@ -1,3 +1,4 @@
+#include <ArgParser.h>
 #include <assert.h>
 #include <ProductorAutos.h>
 #include <estacion/constantes.h>
@@ -21,6 +22,7 @@ ProductorAutos::~ProductorAutos ()
 
 void ProductorAutos::run ()
 {
+	ArgParser& args = ArgParser::getInstance ();
 	SignalHandler& sh = SignalHandler::getInstance ();
 	sh.registrarHandler (SIGINT, this);
 
@@ -30,6 +32,32 @@ void ProductorAutos::run ()
 	       << Logger::endl;
 
 	srand ( time(NULL) );
+
+	if (args.burstSize () == 0) {
+		producirConEspera ();
+	} else {
+		producirRafaga (args.burstSize ());
+	}
+
+	logger << "Finalizando el proceso" << Logger::endl;
+}
+
+void ProductorAutos::producirRafaga (int cantidad)
+{
+	assert (cantidad > 0);
+	Logger& logger = LoggerRegistry::getLogger ("ProductorAutos");
+
+	for (int i=1; i <= cantidad; i++) {
+		logger << "Produciendo auto " << i << Logger::endl;
+		int err = producirAutos ();
+		logger << "producirAutos devolvió " << err
+		       << Logger::endl;
+	}
+}
+
+void ProductorAutos::producirConEspera ()
+{
+	Logger& logger = LoggerRegistry::getLogger ("ProductorAutos");
 
 	while (interrumpido == 0) {
 		// simulación del tiempo de llegada de 1 auto
@@ -47,8 +75,10 @@ void ProductorAutos::run ()
 		logger << "Se llama a producirAutos." << Logger::endl;
 		int err = producirAutos ();
 		logger << "producirAutos devolvió " << err << Logger::endl;
+		if (err != 0) {
+			break;		
+		}
 	}
-	logger << "Finalizando el proceso" << Logger::endl;
 }
 
 int ProductorAutos::producirAutos ()
@@ -77,7 +107,7 @@ int ProductorAutos::producirAutos ()
 
 		} else if (err != 0) {
 			if (interrumpido == 1) {
-				return 0;
+				return EINTR;
 			}
 			logger << "Se agregó el auto: {"
 				   << "litros: " << elAuto.litros
