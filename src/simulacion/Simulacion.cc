@@ -1,6 +1,7 @@
 #include <ArgParser.h>
 #include <cassert>
 #include <estacion/constantes.h>
+#include <iostream>
 #include <logging/Logger.h>
 #include <logging/LoggerRegistry.h>
 #include <set>
@@ -95,6 +96,9 @@ void Simulacion::run ()
 	logger << "simulacion corriendo con pid " << getpid ()
 	       << Logger::endl;
 
+	std::cout << "Iniciando simulación..." << std::endl;
+	std::cout << "Lanzando empleados " << std::flush;
+
 	for (unsigned i=1; i <= args.empleados (); i++) {
 		std::ostringstream oss;
 		oss << i;
@@ -127,8 +131,12 @@ void Simulacion::run ()
 		logger << "Proceso hijo: " << pid << Logger::endl;
 		hijos.insert (pid);
 		areaTareas[i - 1].owner = pid;
-	}
 
+		std::cout << "." << std::flush;
+	}
+	std::cout << " [completado]" << std::endl;
+
+	std::cout << "Lanzando jefe " << std::flush;
 	// Luego de inicializar por completo el area de tareas
 	// se lanza el proceso jefe.
 	{
@@ -156,7 +164,9 @@ void Simulacion::run ()
 		logger << "Proceso hijo: " << pid << Logger::endl;
 		hijos.insert (pid);
 	}
+	std::cout << " [completado]" << std::endl;
 
+	std::cout << "Lanzando administrador " << std::flush;
 	// luego se lanza el proceso administrador
 	{
 		std::vector<char*> argumentos;
@@ -183,7 +193,9 @@ void Simulacion::run ()
 		logger << "Proceso hijo: " << pid << Logger::endl;
 		hijos.insert (pid);
 	}
+	std::cout << " [completado]" << std::endl;
 
+	std::cout << "Lanzando el productor de autos " << std::flush;
 	// el ultimo proceso que se lanza es el productor de autos
 	{
 		std::vector<char*> argumentos;
@@ -210,20 +222,28 @@ void Simulacion::run ()
 		logger << "Proceso hijo: " << pid << Logger::endl;
 		hijos.insert (pid);
 	}
+	std::cout << " [completado]" << std::endl;
+	std::cout << "...simulación corriendo" << std::endl;
 
 	pid_t hijoTerminado = wait (NULL);
 	logger << "Esperando que se detengan los hijos..." << Logger::endl;
+
+	std::cout << std::endl;
+	std::cout << "Esperando que se detengan los hijos..." << std::flush;
 	if (hijoTerminado != -1) {
 		logger << "pid " << hijoTerminado
 		       << " ya terminó"
 		       << Logger::endl;
 		hijos.erase (hijoTerminado);
+		std::cout << " " << hijoTerminado << std::flush;
 	}
 
 	esperarHijos (hijos);
 
 	logger << "Todos los hijos terminaron. "
 	       << "Finalizando simulación." << Logger::endl;
+
+	std::cout << "Simulación finalizada" << std::endl;
 }
 
 void Simulacion::esperarHijos (std::set<pid_t>& hijos)
@@ -237,8 +257,10 @@ void Simulacion::esperarHijos (std::set<pid_t>& hijos)
 			       << e.what () << Logger::endl;
 		} else {
 			hijos.erase (hijo);
+			std::cout << " " << hijo << std::flush;
 		}
 	}
+	std::cout << std::endl;
 }
 
 void Simulacion::detenerHijos (std::set<pid_t>& hijos)
