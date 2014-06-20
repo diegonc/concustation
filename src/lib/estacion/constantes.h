@@ -103,7 +103,7 @@ namespace estacion {
 	/*
 	 * tiempo en segundos que esperará el cliente por cada litro de combustible cargado
 	 */
-	const float TIEMPO_LITRO = 1;
+	const int TIEMPO_LITRO = 1;
 
 }
 
