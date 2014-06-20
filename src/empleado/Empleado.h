@@ -6,6 +6,7 @@
 #include <estacion/Tarea.h>
 #include <signal.h>
 #include <system/EventHandler.h>
+#include <system/MessageQueue.h>
 #include <system/Semaphore.h>
 #include <system/SharedArray.h>
 #include <system/SharedVariable.h>
@@ -23,21 +24,15 @@ class Empleado : public EventHandler
 	Semaphore semCaja;
 
 	SharedVariable<Configuracion> areaConfiguracion;
-	SharedArray<Tarea> areaTareas;
+	MessageQueue<Tarea> msgEmpleados;
 	SharedVariable<float> areaCaja;
 	ListaEntero listaEmpleados;
 	ListaEntero listaSurtidores;
 
 	volatile sig_atomic_t interrumpido;
-	volatile sig_atomic_t tareaAsignada;
-	// Señales que se desbloquean durante la suspensión
-	sigset_t unblocked;
-	// Estado inicial de la mascara de señales
-	sigset_t oldset;
 
 	void inicializarSeniales ();
 	void finalizarSeniales ();
-	void esperarSenial ();
 
 	// Realiza las tareas para procesar un Auto asignado por el jefe
 	// de estacion

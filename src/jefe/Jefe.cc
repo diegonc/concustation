@@ -12,10 +12,13 @@ Jefe::Jefe ()
 	: areaConfiguracion (
 		  IPCName (estacion::PATH_NAME, estacion::AREA_CONFIGURACION)
 		, 0666)
-	, areaTareas (
-		  IPCName (estacion::PATH_NAME, estacion::AREA_TAREAS)
+	, areaNomina (
+		IPCName (estacion::PATH_NAME, estacion::AREA_NOMINA)
 		, 0666
 		, areaConfiguracion.get ().empleados)
+	, msgEmpleados (
+		  IPCName (estacion::PATH_NAME, estacion::MSG_EMPLEADOS)
+		, 0666)
 	, semListaEmpleados (
 		  IPCName (estacion::PATH_NAME, estacion::SEM_EMPLEADOS)
 		, 1
@@ -28,7 +31,8 @@ Jefe::Jefe ()
 	, interrumpido (0)
 {
 	areaConfiguracion.persist ();
-	areaTareas.persist ();
+	areaNomina.persist ();
+	msgEmpleados.persist ();
 	semListaEmpleados.persist ();
 	listaEmpleados.persist ();
 }
@@ -130,21 +134,12 @@ void Jefe::despacharAuto (const Auto& elAuto)
 	}
 	assert (idEmp > 0);
 
-	// Grabar el auto en el area de tareas
-	logger << "Grabando el auto en el area de tareas." << Logger::endl;
-	Tarea& tarea = areaTareas[idEmp - 1];
-	tarea.asignacion = elAuto;
-
-	// Finalmente se despierta al empleado
-	logger << "Despertando al empleado " << idEmp
-	       << " (pid: " << tarea.owner << ")"
-	       << Logger::endl;
-	int err = kill (tarea.owner, SIGUSR1);
-	if (err == -1) {
-		SystemErrorException e;
-		logger << "kill devolvio: " << err
-		       << " (" << e.what () << ")" << Logger::endl;
-	}
+	// Enviar el auto por la cola 
+	logger << "Notificando al empleado de su tarea." << Logger::endl;
+	Tarea tarea;
+	tarea.mtype = areaNomina[idEmp - 1];
+	tarea.litros = elAuto.litros;
+	msgEmpleados.send (tarea);
 }
 
 void Jefe::handleSignal (int signum)

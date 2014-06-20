@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <system/EventHandler.h>
 #include <system/FifoFilesystemObject.h>
+#include <system/MessageQueue.h>
 #include <system/Semaphore.h>
 #include <system/SharedArray.h>
 #include <system/SharedVariable.h>
@@ -26,7 +27,8 @@ class Simulacion : public EventHandler
 	Semaphore semSurtidoresLibres;
 
 	SharedVariable<Configuracion> areaConfiguracion;
-	SharedArray<Tarea> areaTareas;
+	SharedArray<pid_t> areaNomina;
+	MessageQueue<Tarea> msgEmpleados;
 	SharedVariable<float> areaCaja;
 	ListaEntero listaEmpleados;
 	ListaEntero listaSurtidores;
