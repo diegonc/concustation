@@ -80,7 +80,6 @@ void Empleado::inicializarSeniales ()
 	// Preparar la mascara de bloqueo para poder utilizar sigsuspend.
 	sigset_t blocked;
 	oldset = blocked = unblocked = SignalHandler::getProcMask ();
-	sigaddset (&blocked, SIGINT);
 	sigaddset (&blocked, SIGUSR1);
 	sigdelset (&unblocked, SIGINT);
 	sigdelset (&unblocked, SIGUSR1);
@@ -113,6 +112,8 @@ void Empleado::run ()
 		if (tareaAsignada == 1) {
 			procesarAuto ();
 			tareaAsignada = 0;
+			// Verificar que no se haya recibido señal antes de dormir
+			continue;
 		}
 		logger << "esperando asignación..." << Logger::endl;
 		esperarSenial ();
@@ -150,7 +151,11 @@ void Empleado::procesarAuto ()
 		logger << "Esperando recarga (" << tiempoEspera
 		       << " segundos)" << Logger::endl;
 
-		sleep (tiempoEspera);
+		int restante = sleep (tiempoEspera);
+		if (restante > 0) {
+			// Interrumpido por señal
+			throw SystemErrorException (EINTR);
+		}
 
 		logger << "Recarga finalizada. "
 		       << "Se acreditará el monto en la caja."
