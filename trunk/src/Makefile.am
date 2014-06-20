@@ -20,6 +20,7 @@ libSources = \
 	lib/system/File.cc \
 	lib/system/File.h \
 	lib/system/IPCName.h \
+	lib/system/MessageQueue.h \
 	lib/system/Semaphore.cc \
 	lib/system/Semaphore.h \
 	lib/system/SemaphoreLocker.h \

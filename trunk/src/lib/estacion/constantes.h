@@ -27,9 +27,17 @@ namespace estacion {
 
 	/*
 	 * proj_id pasado a ftok para generar la key correspondiente a la
-	 * memoria compartida utilizada para almacenar la asignacion de tareas.
+	 * memoria compartida utilizada para almacenar la nómina de empleados
+	 * en donde se registran los PID de los empleados.
 	 */
-	const char AREA_TAREAS = 'T';
+	const char AREA_NOMINA = 'N';
+
+	/*
+	 * proj_id pasado a ftok para generar la key correspondiente a la
+	 * cola de mensajes a traves de la que el jefe de estación envia las
+	 * tareas a los empleados.
+	 */
+	const char MSG_EMPLEADOS = 'T';
 
 	/*
 	 * proj_id pasado a ftok para generar la key correspondiente a la

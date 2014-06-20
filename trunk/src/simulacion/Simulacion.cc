@@ -27,10 +27,13 @@ Simulacion::Simulacion ()
 	, areaConfiguracion (
 		IPCName (estacion::PATH_NAME, estacion::AREA_CONFIGURACION)
 		, 0666 | IPC_CREAT | IPC_EXCL)
-	, areaTareas (
-		IPCName (estacion::PATH_NAME, estacion::AREA_TAREAS)
+	, areaNomina (
+		IPCName (estacion::PATH_NAME, estacion::AREA_NOMINA)
 		, 0666 | IPC_CREAT | IPC_EXCL
 		, ArgParser::getInstance ().empleados ())
+	, msgEmpleados (
+		IPCName (estacion::PATH_NAME, estacion::MSG_EMPLEADOS)
+		, 0666 | IPC_CREAT | IPC_EXCL)
 	, areaCaja (
 		IPCName (estacion::PATH_NAME, estacion::AREA_CAJA)
 		, 0666 | IPC_CREAT | IPC_EXCL)
@@ -130,7 +133,7 @@ void Simulacion::run ()
 		}
 		logger << "Proceso hijo: " << pid << Logger::endl;
 		hijos.insert (pid);
-		areaTareas[i - 1].owner = pid;
+		areaNomina[i - 1] = pid;
 
 		std::cout << "." << std::flush;
 	}

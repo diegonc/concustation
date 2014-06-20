@@ -24,10 +24,9 @@ Empleado::Empleado(int id)
 	, areaConfiguracion (
 		  IPCName (estacion::PATH_NAME, estacion::AREA_CONFIGURACION)
 		, 0666)
-	, areaTareas (
-		  IPCName (estacion::PATH_NAME, estacion::AREA_TAREAS)
-		, 0666
-		, areaConfiguracion.get ().empleados)
+	, msgEmpleados (
+		  IPCName (estacion::PATH_NAME, estacion::MSG_EMPLEADOS)
+		, 0666)
 	, areaCaja (
 		  IPCName (estacion::PATH_NAME, estacion::AREA_CAJA)
 		, 0666)
@@ -42,18 +41,14 @@ Empleado::Empleado(int id)
 		, areaConfiguracion.get ().surtidores
 		, semListaSurtidores)
 	, interrumpido (0)
-	, tareaAsignada (0)
 {
-	sigemptyset (&unblocked);
-	sigemptyset (&oldset);
-
 	// No borrar mecanismos de IPC
 	semSurtidoresLibres.persist ();
 	semListaSurtidores.persist ();
 	semListaEmpleados.persist ();
 	semCaja.persist ();
 	areaConfiguracion.persist ();
-	areaTareas.persist ();
+	msgEmpleados.persist ();
 	areaCaja.persist ();
 	listaEmpleados.persist ();
 	listaSurtidores.persist ();
@@ -63,8 +58,6 @@ void Empleado::handleSignal (int signum)
 {
 	if (signum == SIGINT) {
 		interrumpido = 1;
-	} else if (signum == SIGUSR1) {
-		tareaAsignada = 1;
 	}
 }
 
@@ -75,15 +68,6 @@ void Empleado::inicializarSeniales ()
 
 	SignalHandler& handler = SignalHandler::getInstance ();
 	handler.registrarHandler (SIGINT, this, bloqueadasDuranteSenial);
-	handler.registrarHandler (SIGUSR1, this, bloqueadasDuranteSenial);
-
-	// Preparar la mascara de bloqueo para poder utilizar sigsuspend.
-	sigset_t blocked;
-	oldset = blocked = unblocked = SignalHandler::getProcMask ();
-	sigaddset (&blocked, SIGUSR1);
-	sigdelset (&unblocked, SIGINT);
-	sigdelset (&unblocked, SIGUSR1);
-	SignalHandler::setProcMask (blocked);
 }
 
 void Empleado::finalizarSeniales ()
@@ -91,12 +75,6 @@ void Empleado::finalizarSeniales ()
 	SignalHandler& handler = SignalHandler::getInstance ();
 	handler.removerHandler (SIGINT);
 	handler.removerHandler (SIGUSR1);
-	SignalHandler::setProcMask (oldset);
-}
-
-void Empleado::esperarSenial ()
-{
-	sigsuspend (&unblocked);
 }
 
 void Empleado::run ()
@@ -109,14 +87,7 @@ void Empleado::run ()
 	inicializarSeniales ();
 
 	while (interrumpido == 0) {
-		if (tareaAsignada == 1) {
-			procesarAuto ();
-			tareaAsignada = 0;
-			// Verificar que no se haya recibido señal antes de dormir
-			continue;
-		}
-		logger << "esperando asignación..." << Logger::endl;
-		esperarSenial ();
+		procesarAuto ();
 	}
 
 	logger << "Finalizando por señal de interrupción." << Logger::endl;
@@ -128,8 +99,9 @@ void Empleado::procesarAuto ()
 {
 	Logger& logger = LoggerRegistry::getLogger ("Empleado");
 	try {
+		logger << "esperando asignación..." << Logger::endl;
 
-		Auto tarea = areaTareas[id - 1].asignacion;
+		Tarea tarea = msgEmpleados.receive (getpid ());
 		logger << "Comenzando el procesamiento del auto {"
 		       << "litros: " << tarea.litros << "}" << Logger::endl;
 
