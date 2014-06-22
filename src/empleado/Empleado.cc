@@ -5,16 +5,9 @@
 #include <logging/Logger.h>
 #include <logging/LoggerRegistry.h>
 #include <system/SignalHandler.h>
-#include <system/SemaphoreLocker.h>
 
 Empleado::Empleado(int id)
 	: id (id)
-	, semCaja (
-		  IPCName (estacion::PATH_NAME, estacion::SEM_CAJA)
-		, 1, 0666)
-	, areaConfiguracion (
-		  IPCName (estacion::PATH_NAME, estacion::AREA_CONFIGURACION)
-		, 0666)
 	, msgEmpleados (
 		  IPCName (estacion::PATH_NAME, estacion::MSG_EMPLEADOS)
 		, 0666)
@@ -24,18 +17,16 @@ Empleado::Empleado(int id)
 	, msgSurtidores (
 		  IPCName (estacion::PATH_NAME, estacion::MSG_SURTIDORES)
 		, 0666)
-	, areaCaja (
-		  IPCName (estacion::PATH_NAME, estacion::AREA_CAJA)
+	, msgCaja (
+		  IPCName (estacion::PATH_NAME, estacion::MSG_CAJA)
 		, 0666)
 	, interrumpido (0)
 {
 	// No borrar mecanismos de IPC
-	semCaja.persist ();
-	areaConfiguracion.persist ();
 	msgEmpleados.persist ();
 	msgJefe.persist ();
 	msgSurtidores.persist ();
-	areaCaja.persist ();
+	msgCaja.persist ();
 }
 
 void Empleado::handleSignal (int signum)
@@ -95,7 +86,7 @@ void Empleado::procesarAuto ()
 		opSurtidores.mtype = MSG_SOLICITAR_SURTIDOR;
 		opSurtidores.rtype = getpid ();
 		opSurtidores.idSurtidor = 0;
-		msgSurtidores.send(opSurtidores);
+		msgSurtidores.send (opSurtidores);
 
 		logger << "Esperando un surtidor disponible." << Logger::endl;
 		opSurtidores = msgSurtidores.receive (getpid ());
@@ -122,26 +113,18 @@ void Empleado::procesarAuto ()
 		       << "Se acreditará el monto en la caja."
 		       << Logger::endl;
 
-		// Se actualiza el monto de la caja en forma atómica
-		// tomando el semáforo de la caja.
-		{
-			logger << "Bloqueando el semáforo de caja."
-			       << Logger::endl;
-			SemaphoreLocker locker (semCaja);
-			float montoCaja = areaCaja.get ();
-			float nuevoMonto = montoCaja + (tarea.litros * estacion::PRECIO_LITRO);
-			areaCaja.set (nuevoMonto);
-			logger << "Monto inicial: " << montoCaja << Logger::endl;
-			logger << "Nuevo monto: " << nuevoMonto << Logger::endl;
-			logger << "Desbloqueado el semáforo de caja."
-			       << Logger::endl;
-		}
+		float montoCarga = tarea.litros * estacion::PRECIO_LITRO;
+		OpCaja opCaja;
+		opCaja.mtype = MSG_ACREDITAR_MONTO;
+		opCaja.rtype = getpid ();
+		opCaja.monto = montoCarga;
+		msgCaja.send (opCaja);
 
 		logger << "Devolviendo el surtidor " << surtidor
 		       << Logger::endl;
 		opSurtidores.mtype = MSG_DEVOLVER_SURTIDOR;
 		opSurtidores.rtype = 0;
-		msgSurtidores.send(opSurtidores);
+		msgSurtidores.send (opSurtidores);
 
 		// Luego de terminar el procesamiento del auto, el empleado se
 		// agrega a la lista de empleados libres.

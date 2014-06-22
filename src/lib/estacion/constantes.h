@@ -44,33 +44,22 @@ namespace estacion {
 
 	/*
 	 * proj_id pasado a ftok para generar la key correspondiente a la
-	 * cola de mensajes desde la que el jefe de estación toma las
-	 * operaciones que debe realizar: devolución de empleados, cliente
-	 * VIP o cliente regular.
+	 * cola de mensajes desde la que el empleado solicita y devuelve surtidores
+	 * al proceso de Surtidores
 	 */
 	const char MSG_SURTIDORES = 'S';
 
 	/*
 	 * proj_id pasado a ftok para generar la key correspondiente a la
-	 * memoria compartida utilizada para almacenar la caja.
+	 * cola de mensajes desde la que los empleados y el administrador
+	 * consultan y actualizan el monto de Caja
 	 */
-	const char AREA_CAJA = 'C';
-
-	/*
-	 * proj_id pasado a ftok para generar la key correspondiente al
-	 * semaforo que protege la caja.
-	 */
-	const char SEM_CAJA = 'c';
+	const char MSG_CAJA = 'C';
 
 	/*
 	 * tiempo medio (en segundos) entre consultas del administrador
 	 */
 	const int MEDIA_ENTRE_CONSULTAS_ADM = 20;
-
-	/*
-	 * tiempo medio (en segundos) que dura la consulta del administrador
-	 */
-	const int MEDIA_CONSULTA_ADM = 5;
 
 	/*
 	 * tiempo medio (en segundos) que tarda un auto en llegar a la estación
