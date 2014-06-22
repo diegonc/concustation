@@ -50,7 +50,11 @@ void Administrador::run ()
 		// simulación del tiempo para la próxima consulta del administrador
 		int tiempo = (rand() % (2 * estacion::MEDIA_ENTRE_CONSULTAS_ADM)) + 1;
 		logger << "Faltan " << tiempo << " segundos para la próxima consulta del administrador." << Logger::endl;
-		sleep(tiempo);
+		int restante = sleep(tiempo);
+		if (restante > 0) {
+			// Sleep interrumpido - verificar flag
+			continue;
+		}
 
 		logger << "Se llama a consultarCaja." << Logger::endl;
 		int err = consultarCaja ();
