@@ -15,9 +15,6 @@ Empleado::Empleado(int id)
 	, semListaSurtidores (
 		  IPCName (estacion::PATH_NAME, estacion::SEM_SURTIDORES)
 		, 1, 0666)
-	, semListaEmpleados (
-		  IPCName (estacion::PATH_NAME, estacion::SEM_EMPLEADOS)
-		, 1, 0666)
 	, semCaja (
 		  IPCName (estacion::PATH_NAME, estacion::SEM_CAJA)
 		, 1, 0666)
@@ -27,14 +24,12 @@ Empleado::Empleado(int id)
 	, msgEmpleados (
 		  IPCName (estacion::PATH_NAME, estacion::MSG_EMPLEADOS)
 		, 0666)
+	, msgJefe (
+		  IPCName (estacion::PATH_NAME, estacion::MSG_JEFE)
+		, 0666)
 	, areaCaja (
 		  IPCName (estacion::PATH_NAME, estacion::AREA_CAJA)
 		, 0666)
-	, listaEmpleados (
-		  IPCName (estacion::PATH_NAME, estacion::AREA_EMPLEADOS)
-		, 0666
-		, areaConfiguracion.get ().empleados
-		, semListaEmpleados)
 	, listaSurtidores (
 		  IPCName (estacion::PATH_NAME, estacion::AREA_SURTIDORES)
 		, 0666
@@ -45,12 +40,11 @@ Empleado::Empleado(int id)
 	// No borrar mecanismos de IPC
 	semSurtidoresLibres.persist ();
 	semListaSurtidores.persist ();
-	semListaEmpleados.persist ();
 	semCaja.persist ();
 	areaConfiguracion.persist ();
 	msgEmpleados.persist ();
+	msgJefe.persist ();
 	areaCaja.persist ();
-	listaEmpleados.persist ();
 	listaSurtidores.persist ();
 }
 
@@ -156,7 +150,10 @@ void Empleado::procesarAuto ()
 		// agrega a la lista de empleados libres.
 		logger << "Devolviendo el empleado " << id
 		       << Logger::endl;
-		listaEmpleados.put (id);
+		OpJefe operacion;
+		operacion.mtype = MSG_EMPLEADO_LIBRE;
+		operacion.idEmp = id;
+		msgJefe.send (operacion);
 
 		logger << "Desbloqueando el semáforo de surtidores libres..."
 		       << Logger::endl;

@@ -12,8 +12,12 @@
 #include <system/System.h>
 
 ProductorAutos::ProductorAutos ()
-	: interrumpido (0)
+	: msgJefe (
+		IPCName (estacion::PATH_NAME, estacion::MSG_JEFE)
+		, 0666)
+	, interrumpido (0)
 {
+	msgJefe.persist ();
 }
 
 ProductorAutos::~ProductorAutos ()
@@ -86,41 +90,33 @@ int ProductorAutos::producirAutos ()
 	Logger& logger = LoggerRegistry::getLogger ("ProductorAutos");
 	try {
 		logger << "Produciendo un auto..." << Logger::endl;
-		File fifo (estacion::FIFO_NAME, O_WRONLY);
-		Auto elAuto;
+		OpJefe elAuto;
 		elAuto.litros = (rand() % (2 * estacion::MEDIA_LITROS_AUTO)) + 1;
-		ssize_t err;
+		elAuto.mtype = calcularVIP ();
 
-		logger << "Agregando un auto al FIFO..." << Logger::endl;
-		err = fifo.write (sizeof (elAuto), reinterpret_cast<char*> (&elAuto));
-		logger << "write devolvió " << err << Logger::endl;
+		logger << "Agregando un auto a la cola del jefe..." << Logger::endl;
+		logger << "Se agregará el auto: {"
+		       << "mtype: " << elAuto.mtype
+		       << ", litros: " << elAuto.litros
+		       << "}" << Logger::endl;
 
-		if (err == -1) {
-			// Verificar si se recibió una señal
-			// que haya interrumpido el write.
-			if (errno == EINTR) {
-				logger << "write fue interrumpido."
-					   << Logger::endl;
-				return errno;
-			}
-			throw SystemErrorException();
-
-		} else if (err != 0) {
-			if (interrumpido == 1) {
-				return EINTR;
-			}
-			logger << "Se agregó el auto: {"
-				   << "litros: " << elAuto.litros
-				   << "}" << Logger::endl;
-		}
-
+		msgJefe.send (elAuto);
 		return 0;
-
 	} catch (SystemErrorException& e) {
 		logger << "Se atrapo una excepción: "
 		       << e.what ()
 		       << Logger::endl;
 		return e.number ();
+	}
+}
+
+long ProductorAutos::calcularVIP ()
+{
+	int i = rand () % 100;
+	if (i <= estacion::PROBABILIDAD_VIP) {
+		return MSG_AUTO_VIP;
+	} else {
+		return MSG_AUTO_REGULAR;
 	}
 }
 

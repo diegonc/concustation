@@ -3,12 +3,12 @@
 
 #include <estacion/Configuracion.h>
 #include <estacion/ListaEntero.h>
+#include <estacion/OpJefe.h>
 #include <estacion/Tarea.h>
 #include <set>
 #include <signal.h>
 #include <sys/types.h>
 #include <system/EventHandler.h>
-#include <system/FifoFilesystemObject.h>
 #include <system/MessageQueue.h>
 #include <system/Semaphore.h>
 #include <system/SharedArray.h>
@@ -23,17 +23,14 @@ class Simulacion : public EventHandler
 
 	Semaphore semCaja;
 	Semaphore semListaSurtidores;
-	Semaphore semListaEmpleados;
 	Semaphore semSurtidoresLibres;
 
 	SharedVariable<Configuracion> areaConfiguracion;
 	SharedArray<pid_t> areaNomina;
 	MessageQueue<Tarea> msgEmpleados;
+	MessageQueue<OpJefe> msgJefe;
 	SharedVariable<float> areaCaja;
-	ListaEntero listaEmpleados;
 	ListaEntero listaSurtidores;
-
-	FifoFilesystemObject fifo;
 
 	volatile sig_atomic_t interrumpido;
 
