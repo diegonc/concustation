@@ -8,7 +8,7 @@ struct OpSurtidores
 {
 	// Tipo de mensaje que se transmitira al proceso de Surtidores.
 	long mtype;
-	// Tipo de respuesta
+	// Tipo de respuesta (pid del proceso Empleado)
 	long rtype;
 	// ID de surtidor
 	int idSurtidor;

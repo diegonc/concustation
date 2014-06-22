@@ -9,19 +9,14 @@
 #include <stdlib.h>
 #include <system/SignalHandler.h>
 #include <system/System.h>
-#include <system/SemaphoreLocker.h>
 
 Administrador::Administrador ()
-	: semCaja (
-		  IPCName (estacion::PATH_NAME, estacion::SEM_CAJA)
-		, 1, 0666)
-	, areaCaja (
-		  IPCName (estacion::PATH_NAME, estacion::AREA_CAJA)
+	: msgCaja (
+		  IPCName (estacion::PATH_NAME, estacion::MSG_CAJA)
 		, 0666)
 	, interrumpido (0)
 {
-	semCaja.persist ();
-	areaCaja.persist ();
+	msgCaja.persist ();
 }
 
 Administrador::~Administrador ()
@@ -66,29 +61,33 @@ void Administrador::run ()
 void Administrador::imprimirCaja ()
 {
 	Logger& logger = LoggerRegistry::getLogger ("Administrador");
-	logger << "Bloqueando el semáforo de caja." << Logger::endl;
 	
-	SemaphoreLocker locker (semCaja);
-	float montoCaja = areaCaja.get ();
-	std::cout << "Caja: " << montoCaja << std::endl;	
+	OpCaja opCaja;
+	opCaja.mtype = MSG_CONSULTAR_CAJA;
+	opCaja.rtype = getpid ();
+	opCaja.monto = 0;
+	msgCaja.send (opCaja);
+
+	opCaja = msgCaja.receive (getpid ());
+	logger << "Monto en caja: " << opCaja.monto << Logger::endl;
 }
 
 int Administrador::consultarCaja ()
 {
 	Logger& logger = LoggerRegistry::getLogger ("Administrador");
 	try {
-		logger << "Bloqueando el semáforo de caja." << Logger::endl;
-		SemaphoreLocker locker (semCaja);
-		float montoCaja = areaCaja.get ();
+		logger << "Consultando la caja..." << Logger::endl;
+		OpCaja opCaja;
+		opCaja.mtype = MSG_CONSULTAR_CAJA;
+		opCaja.rtype = getpid ();
+		opCaja.monto = 0;
+		msgCaja.send (opCaja);
 
-		int tiempoConsulta = (rand() % (2 * estacion::MEDIA_CONSULTA_ADM)) + 1;
-		logger << "Consultando la caja... (" << tiempoConsulta << " segundos)" << Logger::endl;
-		sleep(tiempoConsulta);
+		opCaja = msgCaja.receive (getpid ());
 
-		logger << "Monto en caja: " << montoCaja << Logger::endl;
-		logger << "Desbloqueado el semáforo de caja."
-			   << Logger::endl;
+		logger << "Monto en caja: " << opCaja.monto << Logger::endl;
 		return 0;
+
 	} catch (SystemErrorException& e) {
 		logger << "Se atrapo una excepción al consultar la caja: "
 		       << e.number () << "("

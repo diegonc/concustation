@@ -10,6 +10,7 @@ libSources = \
 	lib/estacion/ListaEntero.h \
 	lib/estacion/OpJefe.h \
 	lib/estacion/OpSurtidores.h \
+	lib/estacion/OpCaja.h \
 	lib/estacion/Tarea.h \
 	lib/logging/Logger.cc \
 	lib/logging/Logger.h \
@@ -60,6 +61,13 @@ surtidoresSources = \
 	surtidores/Surtidores.cc \
 	surtidores/Surtidores.h \
 	surtidores/main.cc
+	
+cajaSources = \
+	caja/ArgParser.cc \
+	caja/ArgParser.h \
+	caja/Caja.cc \
+	caja/Caja.h \
+	caja/main.cc
 
 jefeSources = \
 	jefe/ArgParser.cc \
@@ -78,6 +86,7 @@ administradorSources = \
 bin_PROGRAMS = \
 	empleado/empleado \
 	surtidores/surtidores \
+	caja/caja \
 	jefe/jefe \
 	productor-autos/productor-autos \
 	administrador/administrador \
@@ -90,6 +99,10 @@ empleado_empleado_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/empleado
 surtidores_surtidores_SOURCES = $(surtidoresSources) $(libSources)
 surtidores_surtidores_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/surtidores
 #surtidores_surtidores_LDADD =
+
+caja_caja_SOURCES = $(cajaSources) $(libSources)
+caja_caja_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/caja
+#caja_caja_LDADD =
 
 jefe_jefe_SOURCES = $(jefeSources) $(libSources)
 jefe_jefe_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/jefe

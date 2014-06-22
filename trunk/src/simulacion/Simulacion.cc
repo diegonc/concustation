@@ -12,10 +12,7 @@
 #include <vector>
 
 Simulacion::Simulacion ()
-	: semCaja (
-		IPCName (estacion::PATH_NAME, estacion::SEM_CAJA)
-		, 1, 0666 | IPC_CREAT | IPC_EXCL)
-	, areaConfiguracion (
+	: areaConfiguracion (
 		IPCName (estacion::PATH_NAME, estacion::AREA_CONFIGURACION)
 		, 0666 | IPC_CREAT | IPC_EXCL)
 	, areaNomina (
@@ -31,18 +28,14 @@ Simulacion::Simulacion ()
 	, msgSurtidores (
 		IPCName (estacion::PATH_NAME, estacion::MSG_SURTIDORES)
 		, 0666 | IPC_CREAT | IPC_EXCL)
-	, areaCaja (
-		IPCName (estacion::PATH_NAME, estacion::AREA_CAJA)
+	, msgCaja (
+		IPCName (estacion::PATH_NAME, estacion::MSG_CAJA)
 		, 0666 | IPC_CREAT | IPC_EXCL)
 {
 	ArgParser& args = ArgParser::getInstance ();
 
-	semCaja.set(0, 1);
-
 	areaConfiguracion.get ().empleados = args.empleados ();
 	areaConfiguracion.get ().surtidores = args.surtidores ();
-
-	areaCaja.set (0);
 }
 
 Simulacion::~Simulacion ()
@@ -129,6 +122,34 @@ void Simulacion::run ()
 		if (pid == -1) {
 			SystemErrorException e;
 			logger << "Fallo al crear surtidores: "
+			       << e.what () << Logger::endl;
+			detenerHijos (hijos);
+			return;
+		}
+		logger << "Proceso hijo: " << pid << Logger::endl;
+		hijos.insert (pid);
+	}
+	std::cout << " [completado]" << std::endl;
+
+	std::cout << "Lanzando caja " << std::flush;
+	{
+		std::vector<char*> argumentos;
+		argumentos.push_back (const_cast<char*> ("./caja"));
+		if (args.debug ()) {
+			argumentos.push_back (const_cast<char*> ("-d"));
+		}
+		argumentos.push_back (NULL);
+
+		logger << "Ejecutando:";
+		for (size_t arg=0; arg < argumentos.size () - 1; arg++) {
+			logger << " " << argumentos[arg];
+		}
+		logger << Logger::endl;
+
+		pid_t pid = System::spawn ("./caja", &argumentos[0]);
+		if (pid == -1) {
+			SystemErrorException e;
+			logger << "Fallo al crear caja: "
 			       << e.what () << Logger::endl;
 			detenerHijos (hijos);
 			return;
