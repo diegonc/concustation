@@ -4,11 +4,11 @@ AM_CXXFLAGS = -O0 -g -Wall -Wextra -Wconversion
 AM_CPPFLAGS = -I$(srcdir)/lib
 
 libSources = \
-	lib/estacion/Auto.h \
 	lib/estacion/constantes.h \
 	lib/estacion/Configuracion.h \
 	lib/estacion/ListaEntero.cc \
 	lib/estacion/ListaEntero.h \
+	lib/estacion/OpJefe.h \
 	lib/estacion/Tarea.h \
 	lib/logging/Logger.cc \
 	lib/logging/Logger.h \
