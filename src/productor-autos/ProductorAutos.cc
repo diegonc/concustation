@@ -2,7 +2,6 @@
 #include <assert.h>
 #include <ProductorAutos.h>
 #include <estacion/constantes.h>
-#include <estacion/Auto.h>
 #include <logging/Logger.h>
 #include <logging/LoggerRegistry.h>
 #include <signal.h>
