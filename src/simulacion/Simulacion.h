@@ -4,6 +4,7 @@
 #include <estacion/Configuracion.h>
 #include <estacion/ListaEntero.h>
 #include <estacion/OpJefe.h>
+#include <estacion/OpSurtidores.h>
 #include <estacion/Tarea.h>
 #include <set>
 #include <signal.h>
@@ -22,15 +23,13 @@ class Simulacion : public EventHandler
 	int id;
 
 	Semaphore semCaja;
-	Semaphore semListaSurtidores;
-	Semaphore semSurtidoresLibres;
 
 	SharedVariable<Configuracion> areaConfiguracion;
 	SharedArray<pid_t> areaNomina;
 	MessageQueue<Tarea> msgEmpleados;
 	MessageQueue<OpJefe> msgJefe;
+	MessageQueue<OpSurtidores> msgSurtidores;
 	SharedVariable<float> areaCaja;
-	ListaEntero listaSurtidores;
 
 	volatile sig_atomic_t interrumpido;
 

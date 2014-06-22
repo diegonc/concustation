@@ -15,12 +15,6 @@ Simulacion::Simulacion ()
 	: semCaja (
 		IPCName (estacion::PATH_NAME, estacion::SEM_CAJA)
 		, 1, 0666 | IPC_CREAT | IPC_EXCL)
-	, semListaSurtidores (
-		IPCName (estacion::PATH_NAME, estacion::SEM_SURTIDORES)
-		, 1, 0666 | IPC_CREAT | IPC_EXCL)
-	, semSurtidoresLibres (
-		IPCName (estacion::PATH_NAME, estacion::SEM_SURTIDORES_LIBRES)
-		, 1, 0666 | IPC_CREAT | IPC_EXCL)
 	, areaConfiguracion (
 		IPCName (estacion::PATH_NAME, estacion::AREA_CONFIGURACION)
 		, 0666 | IPC_CREAT | IPC_EXCL)
@@ -34,31 +28,21 @@ Simulacion::Simulacion ()
 	, msgJefe (
 		IPCName (estacion::PATH_NAME, estacion::MSG_JEFE)
 		, 0666 | IPC_CREAT | IPC_EXCL)
+	, msgSurtidores (
+		IPCName (estacion::PATH_NAME, estacion::MSG_SURTIDORES)
+		, 0666 | IPC_CREAT | IPC_EXCL)
 	, areaCaja (
 		IPCName (estacion::PATH_NAME, estacion::AREA_CAJA)
 		, 0666 | IPC_CREAT | IPC_EXCL)
-	, listaSurtidores (
-		IPCName (estacion::PATH_NAME, estacion::AREA_SURTIDORES)
-		, 0666 | IPC_CREAT | IPC_EXCL
-		, ArgParser::getInstance ().surtidores ()
-		, semListaSurtidores)
 {
 	ArgParser& args = ArgParser::getInstance ();
 
 	semCaja.set(0, 1);
-	semListaSurtidores.set(0, 1);
-	semSurtidoresLibres.set(0, args.surtidores ());
 
 	areaConfiguracion.get ().empleados = args.empleados ();
 	areaConfiguracion.get ().surtidores = args.surtidores ();
 
 	areaCaja.set (0);
-
-	listaSurtidores.debug ();
-	for (int i=args.surtidores (); i > 0; i--) {
-		listaSurtidores.put (i);
-	}
-	listaSurtidores.debug ();
 }
 
 Simulacion::~Simulacion ()
@@ -123,6 +107,34 @@ void Simulacion::run ()
 		areaNomina[i - 1] = pid;
 
 		std::cout << "." << std::flush;
+	}
+	std::cout << " [completado]" << std::endl;
+
+	std::cout << "Lanzando surtidores " << std::flush;
+	{
+		std::vector<char*> argumentos;
+		argumentos.push_back (const_cast<char*> ("./surtidores"));
+		if (args.debug ()) {
+			argumentos.push_back (const_cast<char*> ("-d"));
+		}
+		argumentos.push_back (NULL);
+
+		logger << "Ejecutando:";
+		for (size_t arg=0; arg < argumentos.size () - 1; arg++) {
+			logger << " " << argumentos[arg];
+		}
+		logger << Logger::endl;
+
+		pid_t pid = System::spawn ("./surtidores", &argumentos[0]);
+		if (pid == -1) {
+			SystemErrorException e;
+			logger << "Fallo al crear surtidores: "
+			       << e.what () << Logger::endl;
+			detenerHijos (hijos);
+			return;
+		}
+		logger << "Proceso hijo: " << pid << Logger::endl;
+		hijos.insert (pid);
 	}
 	std::cout << " [completado]" << std::endl;
 

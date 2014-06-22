@@ -9,12 +9,6 @@
 
 Empleado::Empleado(int id)
 	: id (id)
-	, semSurtidoresLibres (
-		  IPCName (estacion::PATH_NAME, estacion::SEM_SURTIDORES_LIBRES)
-		, 1, 0666)
-	, semListaSurtidores (
-		  IPCName (estacion::PATH_NAME, estacion::SEM_SURTIDORES)
-		, 1, 0666)
 	, semCaja (
 		  IPCName (estacion::PATH_NAME, estacion::SEM_CAJA)
 		, 1, 0666)
@@ -27,25 +21,21 @@ Empleado::Empleado(int id)
 	, msgJefe (
 		  IPCName (estacion::PATH_NAME, estacion::MSG_JEFE)
 		, 0666)
+	, msgSurtidores (
+		  IPCName (estacion::PATH_NAME, estacion::MSG_SURTIDORES)
+		, 0666)
 	, areaCaja (
 		  IPCName (estacion::PATH_NAME, estacion::AREA_CAJA)
 		, 0666)
-	, listaSurtidores (
-		  IPCName (estacion::PATH_NAME, estacion::AREA_SURTIDORES)
-		, 0666
-		, areaConfiguracion.get ().surtidores
-		, semListaSurtidores)
 	, interrumpido (0)
 {
 	// No borrar mecanismos de IPC
-	semSurtidoresLibres.persist ();
-	semListaSurtidores.persist ();
 	semCaja.persist ();
 	areaConfiguracion.persist ();
 	msgEmpleados.persist ();
 	msgJefe.persist ();
+	msgSurtidores.persist ();
 	areaCaja.persist ();
-	listaSurtidores.persist ();
 }
 
 void Empleado::handleSignal (int signum)
@@ -99,16 +89,21 @@ void Empleado::procesarAuto ()
 		logger << "Comenzando el procesamiento del auto {"
 		       << "litros: " << tarea.litros << "}" << Logger::endl;
 
-		// Se espera a que haya un surtidor libre, luego se toma
-		// el primero de la lista
-		logger << "Bloqueando el semáforo de surtidores libres."
-		       << Logger::endl;
-		SemaphoreLocker slLocker (semSurtidoresLibres);
+		logger << "Solicitando un surtidor {"
+		       << "rtype: " << getpid () << "}" << Logger::endl;
+		OpSurtidores opSurtidores;
+		opSurtidores.mtype = MSG_SOLICITAR_SURTIDOR;
+		opSurtidores.rtype = getpid ();
+		opSurtidores.idSurtidor = 0;
+		msgSurtidores.send(opSurtidores);
 
-		logger << "Hay surtidores libres, tomando uno de la lista..."
-		       << Logger::endl;
+		logger << "Esperando un surtidor disponible." << Logger::endl;
+		opSurtidores = msgSurtidores.receive (getpid ());
 
-		int surtidor = listaSurtidores.take ();
+		logger << "Surtidor disponible {"
+		       << "idSurtidor: " << opSurtidores.idSurtidor << "}" << Logger::endl;
+
+		int surtidor = opSurtidores.idSurtidor;
 		logger << "El empleado " << id << " esta utilizando el surtidor "
 		       << surtidor << Logger::endl;
 
@@ -144,7 +139,9 @@ void Empleado::procesarAuto ()
 
 		logger << "Devolviendo el surtidor " << surtidor
 		       << Logger::endl;
-		listaSurtidores.put (surtidor);
+		opSurtidores.mtype = MSG_DEVOLVER_SURTIDOR;
+		opSurtidores.rtype = 0;
+		msgSurtidores.send(opSurtidores);
 
 		// Luego de terminar el procesamiento del auto, el empleado se
 		// agrega a la lista de empleados libres.
@@ -155,8 +152,6 @@ void Empleado::procesarAuto ()
 		operacion.idEmp = id;
 		msgJefe.send (operacion);
 
-		logger << "Desbloqueando el semáforo de surtidores libres..."
-		       << Logger::endl;
 	} catch (SystemErrorException& e) {
 		logger << "Se atrapo una excepción al procesar el auto: "
 		       << e.number () << "("
