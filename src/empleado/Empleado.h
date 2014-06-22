@@ -3,6 +3,7 @@
 
 #include <estacion/Configuracion.h>
 #include <estacion/ListaEntero.h>
+#include <estacion/OpJefe.h>
 #include <estacion/Tarea.h>
 #include <signal.h>
 #include <system/EventHandler.h>
@@ -20,13 +21,12 @@ class Empleado : public EventHandler
 
 	Semaphore semSurtidoresLibres;
 	Semaphore semListaSurtidores;
-	Semaphore semListaEmpleados;
 	Semaphore semCaja;
 
 	SharedVariable<Configuracion> areaConfiguracion;
 	MessageQueue<Tarea> msgEmpleados;
+	MessageQueue<OpJefe> msgJefe;
 	SharedVariable<float> areaCaja;
-	ListaEntero listaEmpleados;
 	ListaEntero listaSurtidores;
 
 	volatile sig_atomic_t interrumpido;

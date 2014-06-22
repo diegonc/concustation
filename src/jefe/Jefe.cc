@@ -19,22 +19,20 @@ Jefe::Jefe ()
 	, msgEmpleados (
 		  IPCName (estacion::PATH_NAME, estacion::MSG_EMPLEADOS)
 		, 0666)
-	, semListaEmpleados (
-		  IPCName (estacion::PATH_NAME, estacion::SEM_EMPLEADOS)
-		, 1
+	, msgJefe (
+		  IPCName (estacion::PATH_NAME, estacion::MSG_JEFE)
 		, 0666)
-	, listaEmpleados (
-		  IPCName (estacion::PATH_NAME, estacion::AREA_EMPLEADOS)
-		, 0666
-		, areaConfiguracion.get ().empleados
-		, semListaEmpleados)
 	, interrumpido (0)
 {
 	areaConfiguracion.persist ();
 	areaNomina.persist ();
 	msgEmpleados.persist ();
-	semListaEmpleados.persist ();
-	listaEmpleados.persist ();
+	msgJefe.persist ();
+
+	int M = areaConfiguracion.get ().empleados;
+	for (int i = 1; i <= M; i++) {
+		listaEmpleados.push_back (i);
+	}
 }
 
 Jefe::~Jefe ()
@@ -66,46 +64,25 @@ int Jefe::aceptarAutos ()
 	Logger& logger = LoggerRegistry::getLogger ("Jefe");
 	try {
 		logger << "Esperando la llegada de algún auto..." << Logger::endl;
-		File fifo (estacion::FIFO_NAME, O_RDONLY);
-		Auto elAuto;
-		ssize_t err;
+		OpJefe operacion;
 
-		do {
-			logger << "Leyendo un auto del FIFO..." << Logger::endl;
-			err = fifo.read (sizeof (elAuto),
-			             reinterpret_cast<char*> (&elAuto));
-			logger << "read devolvió " << err << Logger::endl;
+		logger << "Leyendo una operacion de la cola..." << Logger::endl;
+		operacion = msgJefe.receive (-MSG_AUTO_REGULAR);
+		logger << "se obtuvo: { mtype: " << operacion.mtype
+		       << ", idEmp: " << operacion.idEmp
+		       << ", litros: " << operacion.litros << "}" << Logger::endl;
 
-			if (err == -1) {
-				// Verificar si se recibió una señal
-				// que haya interrumpido el read.
-				if (errno == EINTR) {
-					logger << "read fue interrumpido."
-					       << Logger::endl;
-					return errno;
-				}
-				throw SystemErrorException();
-			} else if (err != 0) {
-				// Si se interrumpió un read por la mitad se
-				// descarta lo leido volviendo al ciclo
-				// principal.
-				if (interrumpido == 1) {
-					return 0;
-				}
-				// TODO: hay que acumular datos, read puede
-				// devolver menos de lo pedido.
-				assert (err == sizeof (elAuto));
-				// Recibimos un Auto desde el fifo
-				// Se lo despacha
-				logger << "Se recibio el auto: {"
-				       << "litros: " << elAuto.litros
-				       << "}" << Logger::endl;
-				despacharAuto (elAuto);
-			}
-		} while (err != 0);
-		// El productor cerro el otro extremo del fifo
-		// Se nos vuelve a llamar desde el ciclo principal
-		// en caso que no se haya interrumpido.
+		// Recibimos una operacion de la cola, se la procesa dependiendo de su mtype
+		switch (operacion.mtype)
+		{
+			case MSG_EMPLEADO_LIBRE:
+				listaEmpleados.push_front (operacion.idEmp);
+				break;
+			case MSG_AUTO_VIP:
+			case MSG_AUTO_REGULAR:
+				despacharAuto (operacion);
+				break;
+		};
 		return 0;
 	} catch (SystemErrorException& e) {
 		logger << "Se atrapo una excepción: "
@@ -115,31 +92,29 @@ int Jefe::aceptarAutos ()
 	}
 }
 
-void Jefe::despacharAuto (const Auto& elAuto)
+void Jefe::despacharAuto (const OpJefe& elAuto)
 {
 	Logger& logger = LoggerRegistry::getLogger ("Jefe");
 
 	logger << "Despachando auto: {litros: " << elAuto.litros << "}"
 	       << Logger::endl;
 
-	logger << "Tomando un empleado de la lista." << Logger::endl;
-	int idEmp = listaEmpleados.take ();
-
-	if (idEmp == ListaEntero::EMPTY) {
+	if (listaEmpleados.empty ()) {
 		logger << "Lista de empleados vacía, descartando auto."
 		       << Logger::endl;
-		return;
 	} else {
+		logger << "Tomando un empleado de la lista." << Logger::endl;
+		int idEmp = listaEmpleados.front ();
+		listaEmpleados.pop_front ();
 		logger << "Se tomo el empleado " << idEmp << Logger::endl;
-	}
-	assert (idEmp > 0);
 
-	// Enviar el auto por la cola 
-	logger << "Notificando al empleado de su tarea." << Logger::endl;
-	Tarea tarea;
-	tarea.mtype = areaNomina[idEmp - 1];
-	tarea.litros = elAuto.litros;
-	msgEmpleados.send (tarea);
+		// Enviar el auto por la cola 
+		logger << "Notificando al empleado de su tarea." << Logger::endl;
+		Tarea tarea;
+		tarea.mtype = areaNomina[idEmp - 1];
+		tarea.litros = elAuto.litros;
+		msgEmpleados.send (tarea);
+	}
 }
 
 void Jefe::handleSignal (int signum)

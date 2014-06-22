@@ -3,11 +3,6 @@
 
 namespace estacion {
 	/*
-	 * nombre del FIFO desde donde el jefe de estación toma los autos.
-	 */
-	const char* const FIFO_NAME = "simulacion.fifo";
-
-	/*
 	 * nombre del archivo de log donde se guardan los mensajes
 	 * informativos generados por el programa.
 	 */
@@ -41,16 +36,17 @@ namespace estacion {
 
 	/*
 	 * proj_id pasado a ftok para generar la key correspondiente a la
-	 * memoria compartida utilizada para almacenar la caja.
+	 * cola de mensajes desde la que el jefe de estación toma las
+	 * operaciones que debe realizar: devolución de empleados, cliente
+	 * VIP o cliente regular.
 	 */
-	const char AREA_CAJA = 'C';
+	const char MSG_JEFE = 'J';
 
 	/*
 	 * proj_id pasado a ftok para generar la key correspondiente a la
-	 * memoria compartida utilizada para almacenar la lista de empleados
-	 * libres.
+	 * memoria compartida utilizada para almacenar la caja.
 	 */
-	const char AREA_EMPLEADOS = 'E';
+	const char AREA_CAJA = 'C';
 
 	/*
 	 * proj_id pasado a ftok para generar la key correspondiente a la
@@ -58,12 +54,6 @@ namespace estacion {
 	 * libres.
 	 */
 	const char AREA_SURTIDORES = 'S';
-
-	/*
-	 * proj_id pasado a ftok para generar la key correspondiente al
-	 * semaforo que protege la lista de empleados libres.
-	 */
-	const char SEM_EMPLEADOS = 'e';
 
 	/*
 	 * proj_id pasado a ftok para generar la key correspondiente al
@@ -113,6 +103,10 @@ namespace estacion {
 	 */
 	const int TIEMPO_LITRO = 1;
 
+	/*
+	 * probabilidad de que un auto sea VIP.
+	 */
+	const int PROBABILIDAD_VIP = 35;
 }
 
 #endif // ESTACION_CONSTANTES_H
