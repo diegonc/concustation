@@ -9,6 +9,7 @@ libSources = \
 	lib/estacion/ListaEntero.cc \
 	lib/estacion/ListaEntero.h \
 	lib/estacion/OpJefe.h \
+	lib/estacion/OpSurtidores.h \
 	lib/estacion/Tarea.h \
 	lib/logging/Logger.cc \
 	lib/logging/Logger.h \
@@ -52,6 +53,13 @@ empleadoSources = \
 	empleado/Empleado.cc \
 	empleado/Empleado.h \
 	empleado/main.cc
+	
+surtidoresSources = \
+	surtidores/ArgParser.cc \
+	surtidores/ArgParser.h \
+	surtidores/Surtidores.cc \
+	surtidores/Surtidores.h \
+	surtidores/main.cc
 
 jefeSources = \
 	jefe/ArgParser.cc \
@@ -69,6 +77,7 @@ administradorSources = \
 
 bin_PROGRAMS = \
 	empleado/empleado \
+	surtidores/surtidores \
 	jefe/jefe \
 	productor-autos/productor-autos \
 	administrador/administrador \
@@ -77,6 +86,10 @@ bin_PROGRAMS = \
 empleado_empleado_SOURCES = $(empleadoSources) $(libSources)
 empleado_empleado_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/empleado
 #empleado_empleado_LDADD =
+
+surtidores_surtidores_SOURCES = $(surtidoresSources) $(libSources)
+surtidores_surtidores_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/surtidores
+#surtidores_surtidores_LDADD =
 
 jefe_jefe_SOURCES = $(jefeSources) $(libSources)
 jefe_jefe_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/jefe
