@@ -66,10 +66,7 @@ int Surtidores::aceptarSolicitudes ()
 		switch (operacion.mtype)
 		{
 			case MSG_DEVOLVER_SURTIDOR:
-				listaSurtidores.push_front (operacion.idSurtidor);
-				logger << "Se agregó el surtidor " << operacion.idSurtidor
-					   << " a la lista de surtidores disponibles."
-					   << Logger::endl;
+				reponerSurtidor (operacion);
 				break;
 			case MSG_SOLICITAR_SURTIDOR:
 				despacharSurtidor (operacion);
@@ -88,31 +85,58 @@ void Surtidores::despacharSurtidor (const OpSurtidores& opSurtidores)
 {
 	Logger& logger = LoggerRegistry::getLogger ("Surtidores");
 
-	logger << "Despachando surtidor: {rtype: " << opSurtidores.rtype << "}"
-	       << Logger::endl;
-
-	OpSurtidores operacion;
-
 	if (listaSurtidores.empty ()) {
-		logger << "Lista de surtidores vacía, esperando que se devuelva un surtidor..."
-		       << Logger::endl;
-		operacion = msgSurtidores.receive (MSG_DEVOLVER_SURTIDOR);
-		logger << "Se devolvió el surtidor " << operacion.idSurtidor << Logger::endl;
+		logger << "Lista de surtidores vacía. Encolando solicitud..."
+			   << "{rtype: " << opSurtidores.rtype << "}" << Logger::endl;
+		listaSolicitudesPend.push_front (opSurtidores.rtype);
 
 	} else {
+		logger << "Despachando surtidor: {rtype: " << opSurtidores.rtype << "}"
+		       << Logger::endl;
 		logger << "Tomando un surtidor de la lista." << Logger::endl;
 		int idSurtidor = listaSurtidores.front ();
 		listaSurtidores.pop_front ();
 		logger << "Se tomó el surtidor " << idSurtidor << Logger::endl;
-		operacion.idSurtidor = idSurtidor;
-	}
 
-	operacion.mtype = opSurtidores.rtype;
-	operacion.rtype = 0;
-	logger << "Notificando al empleado el surtidor que puede tomar." << Logger::endl;
-	logger << "{ mtype: " << operacion.mtype
-	       << ", idSurtidor: " << operacion.idSurtidor << "}" << Logger::endl;
-	msgSurtidores.send (operacion);
+		OpSurtidores operacion;
+		operacion.idSurtidor = idSurtidor;
+		operacion.mtype = opSurtidores.rtype;
+		operacion.rtype = 0;
+		logger << "Notificando al empleado el surtidor que puede tomar." << Logger::endl;
+		logger << "{ mtype: " << operacion.mtype
+		       << ", idSurtidor: " << operacion.idSurtidor << "}" << Logger::endl;
+		msgSurtidores.send (operacion);
+	}
+}
+
+void Surtidores::reponerSurtidor (const OpSurtidores& opSurtidores)
+{
+	Logger& logger = LoggerRegistry::getLogger ("Surtidores");
+
+	logger << "Reponiendo surtidor: {idSurtidor: " << opSurtidores.idSurtidor << "}"
+	       << Logger::endl;
+
+	if (listaSolicitudesPend.empty ()) {
+		listaSurtidores.push_front (opSurtidores.idSurtidor);
+		logger << "Se agregó el surtidor " << opSurtidores.idSurtidor
+			   << " a la lista de surtidores disponibles."
+			   << Logger::endl;
+
+	} else {
+		logger << "Tomando una solicitud pendiente de la lista." << Logger::endl;
+		long rtype = listaSolicitudesPend.back ();
+		listaSolicitudesPend.pop_back ();
+		logger << "Se tomó la solicitud pendiente " << rtype << Logger::endl;
+
+		OpSurtidores operacion;
+		operacion.idSurtidor = opSurtidores.idSurtidor;
+		operacion.mtype = rtype;
+		operacion.rtype = 0;
+		logger << "Notificando al empleado el surtidor que puede tomar." << Logger::endl;
+		logger << "{ mtype: " << operacion.mtype
+		       << ", idSurtidor: " << operacion.idSurtidor << "}" << Logger::endl;
+		msgSurtidores.send (operacion);
+	}
 }
 
 void Surtidores::handleSignal (int signum)
