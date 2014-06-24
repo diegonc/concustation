@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.54])
-AC_INIT([concustation], [1.0.0], [BUG-REPORT-ADDRESS])
+AC_INIT([concustation], [2.0.0], [BUG-REPORT-ADDRESS])
 AC_CONFIG_SRCDIR([src/lib/system/System.cc])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE
@@ -31,13 +31,13 @@ AC_TYPE_SSIZE_T
 
 # Checks for library functions.
 AC_FUNC_FORK
-AC_CHECK_FUNCS([mkfifo strerror])
+AC_CHECK_FUNCS([strerror])
 
 AC_CHECK_FUNC([argp_parse], ,
 	AC_MSG_ERROR([argp library not found.]))
 
-AC_CHECK_FUNC([sigsuspend], ,
-	AC_MSG_ERROR([sigsuspend is required]))
+AC_CHECK_FUNC([msgget], ,
+	AC_MSG_ERROR([msgget is required]))
 
 AC_CONFIG_FILES([Makefile
 		 src/Makefile])
