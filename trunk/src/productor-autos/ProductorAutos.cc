@@ -91,6 +91,7 @@ int ProductorAutos::producirAutos ()
 		logger << "Produciendo un auto..." << Logger::endl;
 		OpJefe elAuto;
 		elAuto.litros = (rand() % (2 * estacion::MEDIA_LITROS_AUTO)) + 1;
+		elAuto.idEmp = 0;
 		elAuto.mtype = calcularVIP ();
 
 		logger << "Agregando un auto a la cola del jefe..." << Logger::endl;
