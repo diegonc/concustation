@@ -54,7 +54,7 @@ int Surtidores::aceptarSolicitudes ()
 
 	Logger& logger = LoggerRegistry::getLogger ("Surtidores");
 	try {
-		logger << "Esperando la solicitud algún surtidor..." << Logger::endl;
+		logger << "Esperando la solicitud de algún surtidor..." << Logger::endl;
 		OpSurtidores operacion = msgSurtidores.receive (-MSG_SOLICITAR_SURTIDOR);
 
 		logger << "Leyendo una operacion de la cola..." << Logger::endl;
