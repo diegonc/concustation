@@ -14,7 +14,7 @@ class Surtidores : public EventHandler
 	SharedVariable<Configuracion> areaConfiguracion;
 	MessageQueue<OpSurtidores> msgSurtidores;
 	std::list<int> listaSurtidores;
-	std::list<int> listaSolicitudesPend;
+	std::list<long> listaSolicitudesPend;
 	volatile sig_atomic_t interrumpido;
 
 	int aceptarSolicitudes ();
